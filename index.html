@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)file:///C:/Users/edove/Downloads/portfolio-fil-ariane_3.html -->
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portefeuille — Fil d'Ariane</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #0a0b0e;
+    --bg2: #0f1117;
+    --bg3: #141720;
+    --bg4: #1a1e2e;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --text2: #8a8fa8;
+    --text3: #4a4f68;
+    --accent: #4f6ef7;
+    --accent2: #7b9fff;
+    --green: #22d3a3;
+    --red: #f75b5b;
+    --amber: #f5a623;
+    --purple: #9b6ef7;
+    --teal: #22c3d3;
+
+    --c-marches: #4f6ef7;
+    --c-reels: #22d3a3;
+    --c-matieres: #f5a623;
+    --c-alternatifs: #9b6ef7;
+    --c-numeriques: #f75b5b;
+    --c-liquidites: #8a8fa8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    height: 48px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .topbar-logo {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent2), var(--teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .topbar-sep { width: 1px; height: 20px; background: var(--border2); }
+  .topbar-sub { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .pill-green { background: rgba(34,211,163,0.12); color: var(--green); border: 1px solid rgba(34,211,163,0.25); }
+  .pill-blue { background: rgba(79,110,247,0.12); color: var(--accent2); border: 1px solid rgba(79,110,247,0.25); }
+  .topbar-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .nav-section {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px 16px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 16px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.15s;
+    color: var(--text2);
+    font-size: 12px;
+    font-weight: 500;
+    position: relative;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .nav-item.active {
+    background: rgba(79,110,247,0.1);
+    color: var(--text);
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    border-radius: 0 2px 2px 0;
+  }
+  .nav-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+  .nav-badge {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    background: var(--bg4);
+    color: var(--text3);
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+  .nav-divider { height: 1px; background: var(--border); margin: 8px 16px; }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .main::-webkit-scrollbar { width: 4px; }
+  .main::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* ── PAGE HEADER ── */
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; }
+  .page-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .page-title span { color: var(--accent2); }
+  .page-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); margin-top: 4px; }
+  .header-actions { display: flex; gap: 8px; }
+  .btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent2); background: rgba(79,110,247,0.08); }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); color: var(--bg); }
+
+  /* ── METRICS GRID ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .metric-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+  .metric-card:hover { border-color: var(--border2); }
+  .metric-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--text);
+  }
+  .metric-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    margin-top: 4px;
+  }
+  .pos { color: var(--green); }
+  .neg { color: var(--red); }
+  .muted { color: var(--text3); }
+
+  /* ── GRID 2 COL ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+  .card-action {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--accent2);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .card-action:hover { opacity: 1; }
+  .card-body { padding: 16px; }
+
+  /* ── ALLOCATION BARS ── */
+  .alloc-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 11px;
+  }
+  .alloc-row:last-child { margin-bottom: 0; }
+  .alloc-label {
+    width: 120px;
+    font-size: 11px;
+    color: var(--text2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .alloc-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .alloc-track {
+    flex: 1;
+    height: 4px;
+    background: var(--bg4);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .alloc-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+  .alloc-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text2);
+    width: 30px;
+    text-align: right;
+  }
+  .alloc-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    width: 36px;
+    text-align: right;
+  }
+
+  /* ── DONUT ── */
+  .donut-wrap { display: flex; align-items: center; gap: 20px; padding: 16px; }
+  .donut-svg { flex-shrink: 0; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .legend-label { font-size: 11px; color: var(--text2); }
+  .legend-pct { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); margin-left: auto; }
+
+  /* ── POSITIONS TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text2);
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
+  .td-name { font-weight: 600; color: var(--text); }
+  .td-ticker {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    background: var(--bg4);
+    color: var(--text3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+  }
+  .td-mono { font-family: 'DM Mono', monospace; font-size: 11px; }
+  .td-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  .empty-row td { text-align: center; color: var(--text3); padding: 24px; font-family: 'DM Mono', monospace; font-size: 11px; }
+
+  /* ── PILIER CARDS ── */
+  .piliers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .pilier-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pilier-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 10px 10px 0 0;
+  }
+  .pilier-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+  .pilier-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .pilier-desc { font-size: 11px; color: var(--text3); margin-bottom: 12px; line-height: 1.4; }
+  .pilier-footer { display: flex; align-items: center; justify-content: space-between; }
+  .pilier-pct { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 700; }
+  .pilier-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 10px;
+  }
+
+  /* ── PRINCIPLES VIEW ── */
+  .principles-grid { display: flex; flex-direction: column; gap: 10px; }
+  .principle-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .principle-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    background: rgba(79,110,247,0.1);
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+  .principle-content {}
+  .principle-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .principle-text { font-size: 11px; color: var(--text3); line-height: 1.5; }
+
+  /* ── NEVER LIST ── */
+  .never-list { display: flex; flex-direction: column; gap: 6px; }
+  .never-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: rgba(247,91,91,0.05);
+    border: 1px solid rgba(247,91,91,0.1);
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--text2);
+  }
+  .never-icon { color: var(--red); font-size: 12px; flex-shrink: 0; }
+
+  /* ── ROADMAP ── */
+  .roadmap { display: flex; flex-direction: column; gap: 0; }
+  .roadmap-item {
+    display: flex;
+    gap: 16px;
+    padding: 0 0 20px 0;
+    position: relative;
+  }
+  .roadmap-item:last-child { padding-bottom: 0; }
+  .roadmap-left { display: flex; flex-direction: column; align-items: center; gap: 0; width: 36px; flex-shrink: 0; }
+  .roadmap-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .roadmap-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin-top: 4px;
+    min-height: 20px;
+  }
+  .roadmap-content { flex: 1; padding-bottom: 4px; }
+  .roadmap-phase {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 3px;
+  }
+  .roadmap-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .roadmap-desc { font-size: 11px; color: var(--text3); line-height: 1.5; }
+  .roadmap-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+  .roadmap-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    background: var(--bg4);
+    color: var(--text3);
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── VIEWS ── */
+  .view { display: none; flex-direction: column; gap: 20px; }
+  .view.active { display: flex; }
+
+  /* ── IMPORT ZONE ── */
+  .import-zone {
+    border: 2px dashed var(--border2);
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .import-zone:hover { border-color: var(--accent); background: rgba(79,110,247,0.04); }
+  .import-icon { font-size: 32px; margin-bottom: 12px; }
+  .import-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .import-sub { font-size: 12px; color: var(--text3); }
+  .import-formats {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .format-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 9px;
+    background: var(--bg4);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    color: var(--text2);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .view.active { animation: fadeIn 0.2s ease; }
+
+  @keyframes fillBar {
+    from { width: 0; }
+  }
+
+  /* ── SCROLLBAR GLOBAL ── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">FIL D'ARIANE</div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-sub">Portefeuille Résilient</div>
+  <div class="topbar-right">
+    <span class="pill pill-green">● Actif</span>
+    <span class="pill pill-blue">6 Piliers</span>
+    <div class="topbar-date" id="topbar-date">dim. 15 mars 2026</div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="nav-section">Vue globale</div>
+    <div class="nav-item active" onclick="showView(&#39;dashboard&#39;, this)">
+      <div class="nav-dot" style="background:var(--accent2)"></div>
+      Tableau de bord
+    </div>
+    <div class="nav-item" onclick="showView(&#39;allocation&#39;, this)">
+      <div class="nav-dot" style="background:var(--text3)"></div>
+      Allocation cible
+    </div>
+    <div class="nav-item" onclick="showView(&#39;positions&#39;, this)">
+      <div class="nav-dot" style="background:var(--text3)"></div>
+      Mes positions
+      <span class="nav-badge">0</span>
+    </div>
+
+    <div class="nav-divider"></div>
+    <div class="nav-section">Les 6 Piliers</div>
+
+    <div class="nav-item" onclick="showView(&#39;pilier-marches&#39;, this)">
+      <div class="nav-dot" style="background:var(--c-marches)"></div>
+      Marchés financiers
+      <span class="nav-badge">35%</span>
+    </div>
+    <div class="nav-item" onclick="showView(&#39;pilier-reels&#39;, this)">
+      <div class="nav-dot" style="background:var(--c-reels)"></div>
+      Actifs réels
+      <span class="nav-badge">20%</span>
+    </div>
+    <div class="nav-item" onclick="showView(&#39;pilier-matieres&#39;, this)">
+      <div class="nav-dot" style="background:var(--c-matieres)"></div>
+      Matières premières
+      <span class="nav-badge">10%</span>
+    </div>
+    <div class="nav-item" onclick="showView(&#39;pilier-alternatifs&#39;, this)">
+      <div class="nav-dot" style="background:var(--c-alternatifs)"></div>
+      Actifs alternatifs
+      <span class="nav-badge">15%</span>
+    </div>
+    <div class="nav-item" onclick="showView(&#39;pilier-numeriques&#39;, this)">
+      <div class="nav-dot" style="background:var(--c-numeriques)"></div>
+      Actifs numériques
+      <span class="nav-badge">8%</span>
+    </div>
+    <div class="nav-item" onclick="showView(&#39;pilier-liquidites&#39;, this)">
+      <div class="nav-dot" style="background:var(--c-liquidites)"></div>
+      Liquidités &amp; risques
+      <span class="nav-badge">12%</span>
+    </div>
+
+    <div class="nav-divider"></div>
+    <div class="nav-section">Outils</div>
+
+    <div class="nav-item" onclick="showView(&#39;import&#39;, this)">
+      <div class="nav-dot" style="background:var(--text3)"></div>
+      Import CSV
+    </div>
+    <div class="nav-item" onclick="showView(&#39;principes&#39;, this)">
+      <div class="nav-dot" style="background:var(--text3)"></div>
+      Principes
+    </div>
+    <div class="nav-item" onclick="showView(&#39;roadmap&#39;, this)">
+      <div class="nav-dot" style="background:var(--text3)"></div>
+      Roadmap app
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="view active" id="view-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Tableau de <span>bord</span></div>
+          <div class="page-meta">Dernière mise à jour : en attente de données</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn" onclick="showView(&#39;import&#39;, document.querySelector(&#39;[onclick*=import]&#39;))">↑ Importer CSV</button>
+          <button class="btn btn-primary" onclick="showView(&#39;allocation&#39;, document.querySelector(&#39;[onclick*=allocation]&#39;))">Voir allocation →</button>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Valeur totale</div>
+          <div class="metric-value">—</div>
+          <div class="metric-sub muted">En attente d'import</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Performance YTD</div>
+          <div class="metric-value">—</div>
+          <div class="metric-sub muted">Données manquantes</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Nombre de positions</div>
+          <div class="metric-value">0</div>
+          <div class="metric-sub muted">Sur 6 piliers actifs</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Piliers actifs</div>
+          <div class="metric-value">6</div>
+          <div class="metric-sub pos">Architecture complète</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Allocation cible par pilier</div>
+            <div class="card-action" onclick="showView(&#39;allocation&#39;, null)">Détail →</div>
+          </div>
+          <div class="card-body">
+            <div class="alloc-row">
+              <div class="alloc-label"><div class="alloc-dot" style="background:var(--c-marches)"></div>Marchés financiers</div>
+              <div class="alloc-track"><div class="alloc-fill" style="width:35%;background:var(--c-marches)"></div></div>
+              <div class="alloc-pct">35%</div>
+            </div>
+            <div class="alloc-row">
+              <div class="alloc-label"><div class="alloc-dot" style="background:var(--c-reels)"></div>Actifs réels</div>
+              <div class="alloc-track"><div class="alloc-fill" style="width:20%;background:var(--c-reels)"></div></div>
+              <div class="alloc-pct">20%</div>
+            </div>
+            <div class="alloc-row">
+              <div class="alloc-label"><div class="alloc-dot" style="background:var(--c-alternatifs)"></div>Alternatifs</div>
+              <div class="alloc-track"><div class="alloc-fill" style="width:15%;background:var(--c-alternatifs)"></div></div>
+              <div class="alloc-pct">15%</div>
+            </div>
+            <div class="alloc-row">
+              <div class="alloc-label"><div class="alloc-dot" style="background:var(--c-liquidites)"></div>Liquidités</div>
+              <div class="alloc-track"><div class="alloc-fill" style="width:12%;background:var(--c-liquidites)"></div></div>
+              <div class="alloc-pct">12%</div>
+            </div>
+            <div class="alloc-row">
+              <div class="alloc-label"><div class="alloc-dot" style="background:var(--c-matieres)"></div>Mat. premières</div>
+              <div class="alloc-track"><div class="alloc-fill" style="width:10%;background:var(--c-matieres)"></div></div>
+              <div class="alloc-pct">10%</div>
+            </div>
+            <div class="alloc-row">
+              <div class="alloc-label"><div class="alloc-dot" style="background:var(--c-numeriques)"></div>Actifs numériques</div>
+              <div class="alloc-track"><div class="alloc-fill" style="width:8%;background:var(--c-numeriques)"></div></div>
+              <div class="alloc-pct">8%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Répartition</div>
+          </div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" width="110" height="110" viewBox="0 0 110 110">
+              <circle cx="55" cy="55" r="40" fill="none" stroke="#1a1e2e" stroke-width="18"></circle>
+              <!-- Donut segments manually calculated -->
+              <!-- Total circumference = 2*PI*40 = 251.3 -->
+              <!-- Marchés 35% = 87.96 -->
+              <circle cx="55" cy="55" r="40" fill="none" stroke="var(--c-marches)" stroke-width="18" stroke-dasharray="87.96 163.34" stroke-dashoffset="0" transform="rotate(-90 55 55)"></circle>
+              <!-- Réels 20% = 50.27, offset=-87.96 -->
+              <circle cx="55" cy="55" r="40" fill="none" stroke="var(--c-reels)" stroke-width="18" stroke-dasharray="50.27 201.06" stroke-dashoffset="-87.96" transform="rotate(-90 55 55)"></circle>
+              <!-- Alternatifs 15% = 37.7 -->
+              <circle cx="55" cy="55" r="40" fill="none" stroke="var(--c-alternatifs)" stroke-width="18" stroke-dasharray="37.7 213.63" stroke-dashoffset="-138.23" transform="rotate(-90 55 55)"></circle>
+              <!-- Liquidités 12% = 30.16 -->
+              <circle cx="55" cy="55" r="40" fill="none" stroke="var(--c-liquidites)" stroke-width="18" stroke-dasharray="30.16 221.12" stroke-dashoffset="-175.93" transform="rotate(-90 55 55)"></circle>
+              <!-- Mat. premières 10% = 25.13 -->
+              <circle cx="55" cy="55" r="40" fill="none" stroke="var(--c-matieres)" stroke-width="18" stroke-dasharray="25.13 226.19" stroke-dashoffset="-206.09" transform="rotate(-90 55 55)"></circle>
+              <!-- Numériques 8% = 20.1 -->
+              <circle cx="55" cy="55" r="40" fill="none" stroke="var(--c-numeriques)" stroke-width="18" stroke-dasharray="20.1 231.19" stroke-dashoffset="-231.22" transform="rotate(-90 55 55)"></circle>
+              <text x="55" y="51" text-anchor="middle" fill="var(--text)" font-family="Syne" font-size="14" font-weight="800">100%</text>
+              <text x="55" y="64" text-anchor="middle" fill="var(--text3)" font-family="DM Mono" font-size="8">CIBLE</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--c-marches)"></div><div class="legend-label">Marchés fin.</div><div class="legend-pct">35%</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--c-reels)"></div><div class="legend-label">Actifs réels</div><div class="legend-pct">20%</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--c-alternatifs)"></div><div class="legend-label">Alternatifs</div><div class="legend-pct">15%</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--c-liquidites)"></div><div class="legend-label">Liquidités</div><div class="legend-pct">12%</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--c-matieres)"></div><div class="legend-label">Mat. premières</div><div class="legend-pct">10%</div></div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--c-numeriques)"></div><div class="legend-label">Numériques</div><div class="legend-pct">8%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Positions actuelles</div>
+          <div class="card-action" onclick="showView(&#39;import&#39;, null)">↑ Importer CSV</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Actif</th>
+                <th>Pilier</th>
+                <th>Enveloppe</th>
+                <th>Montant investi</th>
+                <th>Valeur actuelle</th>
+                <th>Poids</th>
+                <th>Perf.</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="8" class="empty-row" style="text-align:center;color:var(--text3);padding:32px;font-family:&#39;DM Mono&#39;,monospace;font-size:11px;">Aucune position — importe tes fichiers CSV pour commencer</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ALLOCATION ── -->
+    <div class="view" id="view-allocation">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Allocation <span>cible</span></div>
+          <div class="page-meta">Profil : Long terme (10-20 ans) · Tolérance élevée · Objectifs équilibrés</div>
+        </div>
+      </div>
+      <div class="piliers-grid">
+        <div class="pilier-card" style="--pc:var(--c-marches)" onclick="showView(&#39;pilier-marches&#39;, null)">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-marches);border-radius:10px 10px 0 0"></div>
+          <div class="pilier-name" style="color:var(--c-marches)">📈 Marchés Financiers</div>
+          <div class="pilier-desc">Actions, obligations, ETF. Moteur de croissance principal du portefeuille.</div>
+          <div class="pilier-footer">
+            <div class="pilier-pct" style="color:var(--c-marches)">35%</div>
+            <div class="pilier-badge" style="background:rgba(79,110,247,0.1);color:var(--c-marches)">Liquidité haute</div>
+          </div>
+        </div>
+        <div class="pilier-card" onclick="showView(&#39;pilier-reels&#39;, null)">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-reels);border-radius:10px 10px 0 0"></div>
+          <div class="pilier-name" style="color:var(--c-reels)">🏗️ Actifs Réels</div>
+          <div class="pilier-desc">Immobilier, infrastructure, forêts, or. Protection structurelle contre l'inflation.</div>
+          <div class="pilier-footer">
+            <div class="pilier-pct" style="color:var(--c-reels)">20%</div>
+            <div class="pilier-badge" style="background:rgba(34,211,163,0.1);color:var(--c-reels)">Revenus réguliers</div>
+          </div>
+        </div>
+        <div class="pilier-card" onclick="showView(&#39;pilier-alternatifs&#39;, null)">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-alternatifs);border-radius:10px 10px 0 0"></div>
+          <div class="pilier-name" style="color:var(--c-alternatifs)">🔮 Actifs Alternatifs</div>
+          <div class="pilier-desc">Private equity, dette privée, hedge funds. Prime d'illiquidité sur longue durée.</div>
+          <div class="pilier-footer">
+            <div class="pilier-pct" style="color:var(--c-alternatifs)">15%</div>
+            <div class="pilier-badge" style="background:rgba(155,110,247,0.1);color:var(--c-alternatifs)">Illiquide</div>
+          </div>
+        </div>
+        <div class="pilier-card" onclick="showView(&#39;pilier-liquidites&#39;, null)">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-liquidites);border-radius:10px 10px 0 0"></div>
+          <div class="pilier-name" style="color:var(--text2)">🛡️ Liquidités &amp; Risques</div>
+          <div class="pilier-desc">Cash, fonds monétaires, hedging. Survie aux crises et optionalité stratégique.</div>
+          <div class="pilier-footer">
+            <div class="pilier-pct" style="color:var(--text2)">12%</div>
+            <div class="pilier-badge" style="background:rgba(138,143,168,0.1);color:var(--text3)">Optionalité</div>
+          </div>
+        </div>
+        <div class="pilier-card" onclick="showView(&#39;pilier-matieres&#39;, null)">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-matieres);border-radius:10px 10px 0 0"></div>
+          <div class="pilier-name" style="color:var(--c-matieres)">🪨 Matières Premières</div>
+          <div class="pilier-desc">Or, cuivre, uranium, agri. Décorrélation et couverture géopolitique.</div>
+          <div class="pilier-footer">
+            <div class="pilier-pct" style="color:var(--c-matieres)">10%</div>
+            <div class="pilier-badge" style="background:rgba(245,166,35,0.1);color:var(--c-matieres)">Décorrélation</div>
+          </div>
+        </div>
+        <div class="pilier-card" onclick="showView(&#39;pilier-numeriques&#39;, null)">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-numeriques);border-radius:10px 10px 0 0"></div>
+          <div class="pilier-name" style="color:var(--c-numeriques)">🌐 Actifs Numériques</div>
+          <div class="pilier-desc">BTC, ETH, infrastructure crypto. Asymétrie de rendement sur horizon long.</div>
+          <div class="pilier-footer">
+            <div class="pilier-pct" style="color:var(--c-numeriques)">8%</div>
+            <div class="pilier-badge" style="background:rgba(247,91,91,0.1);color:var(--c-numeriques)">Asymétrique</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Fourchettes de tolérance</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pilier</th><th>Cible</th><th>Min</th><th>Max</th><th>Rôle</th><th>Liquidité</th></tr></thead>
+            <tbody>
+              <tr><td><span class="td-name">Marchés Financiers</span></td><td class="td-mono" style="color:var(--c-marches)">35%</td><td class="td-mono">28%</td><td class="td-mono">42%</td><td>Croissance</td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">Haute</span></td></tr>
+              <tr><td><span class="td-name">Actifs Réels</span></td><td class="td-mono" style="color:var(--c-reels)">20%</td><td class="td-mono">15%</td><td class="td-mono">26%</td><td>Inflation</td><td><span class="td-pill" style="background:rgba(245,166,35,0.1);color:var(--amber)">Moyenne</span></td></tr>
+              <tr><td><span class="td-name">Actifs Alternatifs</span></td><td class="td-mono" style="color:var(--c-alternatifs)">15%</td><td class="td-mono">10%</td><td class="td-mono">20%</td><td>Décorrélation</td><td><span class="td-pill" style="background:rgba(247,91,91,0.1);color:var(--red)">Faible</span></td></tr>
+              <tr><td><span class="td-name">Liquidités &amp; Risques</span></td><td class="td-mono">12%</td><td class="td-mono">8%</td><td class="td-mono">18%</td><td>Optionalité</td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">Totale</span></td></tr>
+              <tr><td><span class="td-name">Matières Premières</span></td><td class="td-mono" style="color:var(--c-matieres)">10%</td><td class="td-mono">6%</td><td class="td-mono">15%</td><td>Géopolitique</td><td><span class="td-pill" style="background:rgba(245,166,35,0.1);color:var(--amber)">Moyenne</span></td></tr>
+              <tr><td><span class="td-name">Actifs Numériques</span></td><td class="td-mono" style="color:var(--c-numeriques)">8%</td><td class="td-mono">4%</td><td class="td-mono">12%</td><td>Asymétrie</td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">Haute</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── POSITIONS ── -->
+    <div class="view" id="view-positions">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Mes <span>positions</span></div>
+          <div class="page-meta">Inventaire complet de tous les actifs détenus</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn" onclick="showView(&#39;import&#39;, null)">↑ Importer CSV</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:48px;text-align:center">
+          <div style="font-size:32px;margin-bottom:16px">📥</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:8px">En attente de données</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:20px">Importe tes fichiers CSV depuis tes plateformes courtiers<br>pour voir tes positions apparaître ici automatiquement.</div>
+          <button class="btn btn-primary" onclick="showView(&#39;import&#39;, null)">↑ Importer mes fichiers CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PILIERS DÉTAIL ── -->
+    <div class="view" id="view-pilier-marches">
+      <div class="page-header">
+        <div>
+          <div class="page-title" style="color:var(--c-marches)">📈 Marchés <span style="color:var(--text)">Financiers</span></div>
+          <div class="page-meta">Allocation cible : 35% · Actions, obligations, ETF · Liquidité haute</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Niveau 2 — Sous-catégories</div></div>
+          <div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Description</th></tr></thead><tbody>
+            <tr><td class="td-name">🌍 Actions</td><td>Géographies, secteurs, styles (value/growth/quality)</td></tr>
+            <tr><td class="td-name">🏦 Obligations &amp; Taux</td><td>Souveraines, corporate, HY, TIPS, duration</td></tr>
+            <tr><td class="td-name">🧮 Dérivés &amp; Structurés</td><td>Options, futures, hedging, produits structurés</td></tr>
+            <tr><td class="td-name">📦 Fonds, ETF &amp; Indiciel</td><td>Passif indiciel, smart beta, thématique</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">ETF cœur recommandés</div></div>
+          <div class="table-wrap"><table><thead><tr><th>Ticker</th><th>Indice</th><th>TER</th><th>Enveloppe</th></tr></thead><tbody>
+            <tr><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">WPEA</span></td><td>MSCI World</td><td class="td-mono">0,38%</td><td><span class="td-pill pill-green">PEA</span></td></tr>
+            <tr><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">VWCE</span></td><td>FTSE All-World</td><td class="td-mono">0,22%</td><td><span class="td-pill" style="background:rgba(245,166,35,0.1);color:var(--amber)">CTO</span></td></tr>
+            <tr><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CSP1</span></td><td>S&amp;P 500</td><td class="td-mono">0,07%</td><td><span class="td-pill" style="background:rgba(245,166,35,0.1);color:var(--amber)">CTO</span></td></tr>
+            <tr><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">AEEM</span></td><td>MSCI EM</td><td class="td-mono">0,20%</td><td><span class="td-pill pill-green">PEA</span></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-pilier-reels">
+      <div class="page-header">
+        <div>
+          <div class="page-title" style="color:var(--c-reels)">🏗️ Actifs <span style="color:var(--text)">Réels</span></div>
+          <div class="page-meta">Allocation cible : 20% · Immobilier, infrastructure, forêts · Protection inflation</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Niveau 2 — Sous-catégories</div></div>
+          <div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Description</th></tr></thead><tbody>
+            <tr><td class="td-name">🏠 Immobilier Direct</td><td>Résidentiel, commercial, locatif, nue-propriété</td></tr>
+            <tr><td class="td-name">🏢 Immobilier Coté</td><td>SCPI, SIIC, REITs France/Europe/US</td></tr>
+            <tr><td class="td-name">⚡ Infrastructure</td><td>Énergie, transport, télécoms, datacenters</td></tr>
+            <tr><td class="td-name">🌳 Terres &amp; Forêts</td><td>Farmland, timberland, or physique, carbone</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">SCPI sélectionnées</div></div>
+          <div class="table-wrap"><table><thead><tr><th>SCPI</th><th>TDVM</th><th>Orientation</th></tr></thead><tbody>
+            <tr><td class="td-name">Corum Origin</td><td class="td-mono pos">~6,2%</td><td>Diversifiée Europe</td></tr>
+            <tr><td class="td-name">Remake Live</td><td class="td-mono pos">~7,5%</td><td>Diversifiée Europe</td></tr>
+            <tr><td class="td-name">Transitions Europe</td><td class="td-mono pos">~5,5%</td><td>ESG / Transition</td></tr>
+            <tr><td class="td-name">Corum XL</td><td class="td-mono pos">~5,5%</td><td>Hors zone euro</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-pilier-matieres">
+      <div class="page-header">
+        <div>
+          <div class="page-title" style="color:var(--c-matieres)">🪨 Matières <span style="color:var(--text)">Premières</span></div>
+          <div class="page-meta">Allocation cible : 10% · Métaux, énergie, agriculture · Décorrélation géopolitique</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Niveau 2 — Sous-catégories</div></div>
+          <div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Description</th></tr></thead><tbody>
+            <tr><td class="td-name">🥇 Métaux Précieux</td><td>Or, argent, platine — couverture monétaire</td></tr>
+            <tr><td class="td-name">⚙️ Métaux de Transition</td><td>Cuivre, lithium, cobalt, terres rares</td></tr>
+            <tr><td class="td-name">🛢️ Énergie</td><td>Pétrole, gaz, uranium — renaissance nucléaire</td></tr>
+            <tr><td class="td-name">🌾 Agriculture &amp; Softs</td><td>Blé, maïs, café, cacao — sécurité alimentaire</td></tr>
+            <tr><td class="td-name">🌊 Eau &amp; Ressources Rares</td><td>Utilities eau, terres rares stratégiques</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Métaux précieux — Construction</div></div>
+          <div class="card-body">
+            <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:#f5a623"></div>Or physique</div><div class="alloc-track"><div class="alloc-fill" style="width:40%;background:#f5a623"></div></div><div class="alloc-pct">40%</div></div>
+            <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:#e8e8e8"></div>ETC Or (SGLD)</div><div class="alloc-track"><div class="alloc-fill" style="width:30%;background:#e8e8e8"></div></div><div class="alloc-pct">30%</div></div>
+            <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:#9b6ef7"></div>Royalties (FNV)</div><div class="alloc-track"><div class="alloc-fill" style="width:20%;background:#9b6ef7"></div></div><div class="alloc-pct">20%</div></div>
+            <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:#22d3a3"></div>Minières (GDX)</div><div class="alloc-track"><div class="alloc-fill" style="width:10%;background:#22d3a3"></div></div><div class="alloc-pct">10%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-pilier-alternatifs">
+      <div class="page-header">
+        <div>
+          <div class="page-title" style="color:var(--c-alternatifs)">🔮 Actifs <span style="color:var(--text)">Alternatifs</span></div>
+          <div class="page-meta">Allocation cible : 15% · PE, dette privée, hedge funds · Prime d'illiquidité</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Niveau 2 — Sous-catégories</div></div>
+          <div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Description</th></tr></thead><tbody>
+            <tr><td class="td-name">🚀 Private Equity &amp; VC</td><td>Venture, growth, LBO, secondaires, ELTIF 2.0</td></tr>
+            <tr><td class="td-name">🏦 Private Credit</td><td>Direct lending, mezzanine, crowdlending</td></tr>
+            <tr><td class="td-name">♟️ Hedge Funds</td><td>Long/short, macro, CTA, market neutral</td></tr>
+            <tr><td class="td-name">🎨 Actifs de Collection</td><td>Art, vins, montres, voitures — fractionné</td></tr>
+            <tr><td class="td-name">🎵 Royalties</td><td>Musique, pharma, minières — revenus récurrents</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">ELTIF 2.0 — Accès dès 10 000€</div></div>
+          <div class="table-wrap"><table><thead><tr><th>Plateforme</th><th>Ticket min</th><th>TRI cible</th></tr></thead><tbody>
+            <tr><td class="td-name">Altaroc</td><td class="td-mono">100 000€</td><td class="td-mono pos">15%+</td></tr>
+            <tr><td class="td-name">Moonfare</td><td class="td-mono">50 000€</td><td class="td-mono pos">12-15%</td></tr>
+            <tr><td class="td-name">iCapital</td><td class="td-mono">10 000€</td><td class="td-mono pos">12-15%</td></tr>
+            <tr><td class="td-name">Tikehau ELTIF</td><td class="td-mono">10 000€</td><td class="td-mono pos">8-12%</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-pilier-numeriques">
+      <div class="page-header">
+        <div>
+          <div class="page-title" style="color:var(--c-numeriques)">🌐 Actifs <span style="color:var(--text)">Numériques</span></div>
+          <div class="page-meta">Allocation cible : 8% · BTC, ETH, infrastructure · Asymétrie de rendement</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Répartition interne recommandée</div></div>
+          <div class="card-body">
+            <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:#f7931a"></div>Bitcoin (BTC)</div><div class="alloc-track"><div class="alloc-fill" style="width:55%;background:#f7931a"></div></div><div class="alloc-pct">55%</div></div>
+            <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:#627eea"></div>Ethereum (ETH)</div><div class="alloc-track"><div class="alloc-fill" style="width:25%;background:#627eea"></div></div><div class="alloc-pct">25%</div></div>
+            <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:#22d3a3"></div>Infra cotée</div><div class="alloc-track"><div class="alloc-fill" style="width:10%;background:#22d3a3"></div></div><div class="alloc-pct">10%</div></div>
+            <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:#9b6ef7"></div>Altcoins select.</div><div class="alloc-track"><div class="alloc-fill" style="width:10%;background:#9b6ef7"></div></div><div class="alloc-pct">10%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">ETP Europe accessibles</div></div>
+          <div class="table-wrap"><table><thead><tr><th>Ticker</th><th>Actif</th><th>TER</th></tr></thead><tbody>
+            <tr><td><span class="td-pill" style="background:rgba(247,147,26,0.1);color:#f7931a">BTCW</span></td><td>Bitcoin physique</td><td class="td-mono">0,35%</td></tr>
+            <tr><td><span class="td-pill" style="background:rgba(98,126,234,0.1);color:#627eea">ETHW</span></td><td>Ethereum physique</td><td class="td-mono">0,95%</td></tr>
+            <tr><td><span class="td-pill" style="background:rgba(247,147,26,0.1);color:#f7931a">ABTC</span></td><td>Bitcoin (21Shares)</td><td class="td-mono">1,49%</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-pilier-liquidites">
+      <div class="page-header">
+        <div>
+          <div class="page-title">🛡️ Liquidités &amp; <span>Risques</span></div>
+          <div class="page-meta">Allocation cible : 12% · Cash, hedging, diversification monétaire</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Niveau 2 — Sous-catégories</div></div>
+          <div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Description</th></tr></thead><tbody>
+            <tr><td class="td-name">💵 Cash &amp; Quasi-Cash</td><td>Livrets, fonds monétaires, T-Bills, CSH2</td></tr>
+            <tr><td class="td-name">🛡️ Hedging &amp; Protection</td><td>Puts, VIX, actifs refuge, couvertures change</td></tr>
+            <tr><td class="td-name">🌍 Diversification Monétaire</td><td>Multi-devises, comptes étrangers, or hors système</td></tr>
+            <tr><td class="td-name">📋 Règles de Rééquilibrage</td><td>DCA, seuils, régimes macro, enveloppes fiscales</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Règle de déploiement du cash</div></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(138,143,168,0.08);border-radius:6px;border:1px solid rgba(138,143,168,0.15)">
+                <div style="font-family:&#39;DM Mono&#39;,monospace;font-size:10px;color:var(--text3);width:40px">-15%</div>
+                <div style="font-size:11px;color:var(--text2)">Radar alerte — Observer</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(245,166,35,0.08);border-radius:6px;border:1px solid rgba(245,166,35,0.15)">
+                <div style="font-family:&#39;DM Mono&#39;,monospace;font-size:10px;color:var(--amber);width:40px">-25%</div>
+                <div style="font-size:11px;color:var(--text2)">Déployer 25% du cash stratégique</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(79,110,247,0.08);border-radius:6px;border:1px solid rgba(79,110,247,0.15)">
+                <div style="font-family:&#39;DM Mono&#39;,monospace;font-size:10px;color:var(--accent2);width:40px">-35%</div>
+                <div style="font-size:11px;color:var(--text2)">Déployer 25% supplémentaire</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(34,211,163,0.08);border-radius:6px;border:1px solid rgba(34,211,163,0.15)">
+                <div style="font-family:&#39;DM Mono&#39;,monospace;font-size:10px;color:var(--green);width:40px">-45%</div>
+                <div style="font-size:11px;color:var(--text2)">Achat agressif — Tout déployer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── IMPORT ── -->
+    <div class="view" id="view-import">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Import <span>CSV</span></div>
+          <div class="page-meta">Importe tes fichiers depuis tes plateformes courtiers</div>
+        </div>
+      </div>
+      <div class="import-zone">
+        <div class="import-icon">📥</div>
+        <div class="import-title">Glisse tes fichiers CSV ici</div>
+        <div class="import-sub">ou clique pour sélectionner depuis ton ordinateur</div>
+        <div class="import-formats">
+          <span class="format-tag">Boursorama</span>
+          <span class="format-tag">Fortuneo</span>
+          <span class="format-tag">Degiro</span>
+          <span class="format-tag">Interactive Brokers</span>
+          <span class="format-tag">Binance</span>
+          <span class="format-tag">Coinbase</span>
+          <span class="format-tag">Linxea</span>
+          <span class="format-tag">Tout format CSV</span>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Plateformes supportées</div></div>
+          <div class="table-wrap"><table><thead><tr><th>Plateforme</th><th>Type</th><th>Format</th></tr></thead><tbody>
+            <tr><td class="td-name">Boursorama</td><td>Actions / ETF</td><td class="td-mono">CSV UTF-8</td></tr>
+            <tr><td class="td-name">Fortuneo</td><td>Actions / ETF</td><td class="td-mono">CSV</td></tr>
+            <tr><td class="td-name">Degiro</td><td>Actions / ETF</td><td class="td-mono">CSV</td></tr>
+            <tr><td class="td-name">Interactive Brokers</td><td>Multi-actifs</td><td class="td-mono">CSV / XML</td></tr>
+            <tr><td class="td-name">Binance</td><td>Crypto</td><td class="td-mono">CSV</td></tr>
+            <tr><td class="td-name">Coinbase</td><td>Crypto</td><td class="td-mono">CSV</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Comment ça marche</div></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:22px;height:22px;border-radius:50%;background:rgba(79,110,247,0.15);color:var(--accent2);font-family:&#39;DM Mono&#39;,monospace;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:600">1</div>
+                <div><div style="font-size:12px;font-weight:600;margin-bottom:2px">Télécharge ton historique</div><div style="font-size:11px;color:var(--text3)">Depuis l'espace "Mon compte" de chaque plateforme</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:22px;height:22px;border-radius:50%;background:rgba(79,110,247,0.15);color:var(--accent2);font-family:&#39;DM Mono&#39;,monospace;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:600">2</div>
+                <div><div style="font-size:12px;font-weight:600;margin-bottom:2px">Glisse le fichier ici</div><div style="font-size:11px;color:var(--text3)">L'application détecte automatiquement le format</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:22px;height:22px;border-radius:50%;background:rgba(79,110,247,0.15);color:var(--accent2);font-family:&#39;DM Mono&#39;,monospace;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:600">3</div>
+                <div><div style="font-size:12px;font-weight:600;margin-bottom:2px">Le tableau de bord s'anime</div><div style="font-size:11px;color:var(--text3)">Positions, allocation réelle vs cible, performances</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PRINCIPES ── -->
+    <div class="view" id="view-principes">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Principes &amp; <span>Philosophie</span></div>
+          <div class="page-meta">Tes règles fondamentales — à lire lors des moments de stress de marché</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="principles-grid">
+          <div class="principle-item"><div class="principle-num">1</div><div class="principle-content"><div class="principle-title">La diversification est la seule garantie gratuite</div><div class="principle-text">La seule stratégie qui résiste à l'incertitude radicale. Personne ne sait ce qui surperformera dans 15 ans.</div></div></div>
+          <div class="principle-item"><div class="principle-num">2</div><div class="principle-content"><div class="principle-title">Le temps est le seul levier gratuit</div><div class="principle-text">Chaque année de détention augmente la probabilité d'un résultat positif. La patience est un avantage compétitif réel.</div></div></div>
+          <div class="principle-item"><div class="principle-num">3</div><div class="principle-content"><div class="principle-title">Les crises sont des opportunités</div><div class="principle-text">Une baisse de -30% sur un actif de qualité est une promotion de 43%. Les liquidités stratégiques sont faites pour ça.</div></div></div>
+          <div class="principle-item"><div class="principle-num">4</div><div class="principle-content"><div class="principle-title">Distinguer le bruit du signal</div><div class="principle-text">90% des infos financières quotidiennes sont du bruit. Les décisions reposent sur des thèses à 5-10 ans.</div></div></div>
+          <div class="principle-item"><div class="principle-num">5</div><div class="principle-content"><div class="principle-title">Coûts et fiscalité sont les seuls rendements certains</div><div class="principle-text">Optimiser les frais et les enveloppes fiscales avant de chercher l'alpha. Un ETF à 0,10% bat souvent la gestion active.</div></div></div>
+          <div class="principle-item"><div class="principle-num">6</div><div class="principle-content"><div class="principle-title">Comprendre avant d'investir</div><div class="principle-text">Règle absolue : ne jamais investir dans ce qu'on ne peut pas expliquer en deux phrases simples.</div></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Ce que je ne ferai jamais</div></div>
+            <div class="card-body">
+              <div class="never-list">
+                <div class="never-item"><span class="never-icon">✕</span>Vendre en panique lors d'un krach sans réévaluer la thèse</div>
+                <div class="never-item"><span class="never-icon">✕</span>Investir dans ce que je ne comprends pas</div>
+                <div class="never-item"><span class="never-icon">✕</span>Chaser une performance passée récente</div>
+                <div class="never-item"><span class="never-icon">✕</span>Mettre plus de 5% sur un actif purement spéculatif</div>
+                <div class="never-item"><span class="never-icon">✕</span>M'endetter pour spéculer sur des actifs liquides</div>
+                <div class="never-item"><span class="never-icon">✕</span>Réagir aux titres de presse financière sans recul</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Profil investisseur</div></div>
+            <div class="table-wrap"><table><tbody>
+              <tr><td style="color:var(--text3);font-size:11px">Horizon</td><td class="td-mono" style="color:var(--accent2)">Long terme (10-20 ans)</td></tr>
+              <tr><td style="color:var(--text3);font-size:11px">Tolérance baisse</td><td class="td-mono" style="color:var(--amber)">Élevée (accepte -40%)</td></tr>
+              <tr><td style="color:var(--text3);font-size:11px">Objectif</td><td style="font-size:11px">Croissance + revenus + protection</td></tr>
+              <tr><td style="color:var(--text3);font-size:11px">Style</td><td style="font-size:11px">Diversification max, conviction, patience</td></tr>
+            </tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ROADMAP ── -->
+    <div class="view" id="view-roadmap">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Roadmap <span>Application</span></div>
+          <div class="page-meta">Architecture cible en 3 phases — du no-code vers l'app souveraine avec agents IA</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Feuille de route</div></div>
+          <div class="card-body">
+            <div class="roadmap">
+              <div class="roadmap-item">
+                <div class="roadmap-left">
+                  <div class="roadmap-dot" style="border-color:var(--green);background:rgba(34,211,163,0.2)"></div>
+                  <div class="roadmap-line"></div>
+                </div>
+                <div class="roadmap-content">
+                  <div class="roadmap-phase" style="color:var(--green)">Phase 1 — Maintenant</div>
+                  <div class="roadmap-title">Application HTML self-contained</div>
+                  <div class="roadmap-desc">Cette application que tu utilises. Navigation, graphiques, allocation. Hébergeable sur Vercel en 5 minutes, gratuitement.</div>
+                  <div class="roadmap-tags"><span class="roadmap-tag">HTML/CSS/JS</span><span class="roadmap-tag">Vercel</span><span class="roadmap-tag">Gratuit</span></div>
+                </div>
+              </div>
+              <div class="roadmap-item">
+                <div class="roadmap-left">
+                  <div class="roadmap-dot" style="border-color:var(--amber);background:rgba(245,166,35,0.1)"></div>
+                  <div class="roadmap-line"></div>
+                </div>
+                <div class="roadmap-content">
+                  <div class="roadmap-phase" style="color:var(--amber)">Phase 2 — 3 mois</div>
+                  <div class="roadmap-title">Import CSV + données réelles</div>
+                  <div class="roadmap-desc">Branchement des fichiers CSV de tes courtiers. Le tableau de bord s'anime avec tes vrais chiffres. Performances, écarts d'allocation.</div>
+                  <div class="roadmap-tags"><span class="roadmap-tag">CSV Parser</span><span class="roadmap-tag">Charts réels</span><span class="roadmap-tag">Positions live</span></div>
+                </div>
+              </div>
+              <div class="roadmap-item">
+                <div class="roadmap-left">
+                  <div class="roadmap-dot" style="border-color:var(--accent);background:rgba(79,110,247,0.1)"></div>
+                  <div class="roadmap-line"></div>
+                </div>
+                <div class="roadmap-content">
+                  <div class="roadmap-phase" style="color:var(--accent2)">Phase 3 — 6 mois</div>
+                  <div class="roadmap-title">Automatisation n8n + alertes</div>
+                  <div class="roadmap-desc">Workflows automatiques : collecte des prix, alertes si allocation dévie, rapports hebdomadaires générés par Claude.</div>
+                  <div class="roadmap-tags"><span class="roadmap-tag">n8n</span><span class="roadmap-tag">API Yahoo Finance</span><span class="roadmap-tag">Claude API</span></div>
+                </div>
+              </div>
+              <div class="roadmap-item">
+                <div class="roadmap-left">
+                  <div class="roadmap-dot" style="border-color:var(--purple);background:rgba(155,110,247,0.1)"></div>
+                </div>
+                <div class="roadmap-content">
+                  <div class="roadmap-phase" style="color:var(--purple)">Phase 4 — 12 mois+</div>
+                  <div class="roadmap-title">Agents IA autonomes</div>
+                  <div class="roadmap-desc">Agent Veille, Agent Allocation, Agent Reporting, Agent Risque. Semi-autonomes, pilotés par Claude, connectés à toutes les sources.</div>
+                  <div class="roadmap-tags"><span class="roadmap-tag">Agents Claude</span><span class="roadmap-tag">MCP</span><span class="roadmap-tag">APIs brokers</span><span class="roadmap-tag">Souverain</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Stack technique</div></div>
+            <div class="table-wrap"><table><thead><tr><th>Couche</th><th>Outil</th><th>Coût</th></tr></thead><tbody>
+              <tr><td>Base de connaissance</td><td class="td-name">Notion</td><td class="td-mono pos">Gratuit</td></tr>
+              <tr><td>Hébergement app</td><td class="td-name">Vercel</td><td class="td-mono pos">Gratuit</td></tr>
+              <tr><td>Données marchés</td><td class="td-name">Yahoo Finance API</td><td class="td-mono pos">Gratuit</td></tr>
+              <tr><td>Automatisation</td><td class="td-name">n8n (self-hosted)</td><td class="td-mono pos">Gratuit</td></tr>
+              <tr><td>Agents IA</td><td class="td-name">Claude API</td><td class="td-mono" style="color:var(--amber)">~10€/mois</td></tr>
+              <tr><td>Serveur VPS</td><td class="td-name">Hetzner / OVH</td><td class="td-mono" style="color:var(--amber)">~5€/mois</td></tr>
+            </tbody></table></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Prochaines actions</div></div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(34,211,163,0.06);border:1px solid rgba(34,211,163,0.12);border-radius:6px">
+                  <div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
+                  <div style="font-size:11px">Héberger cette app sur Vercel</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.12);border-radius:6px">
+                  <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0"></div>
+                  <div style="font-size:11px">Récupérer les CSV des courtiers</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.12);border-radius:6px">
+                  <div style="width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0"></div>
+                  <div style="font-size:11px">Brancher l'import et les données réelles</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-radius:6px">
+                  <div style="width:6px;height:6px;border-radius:50%;background:var(--text3);flex-shrink:0"></div>
+                  <div style="font-size:11px;color:var(--text3)">Installer n8n et premiers workflows</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+  // Date
+  const d = new Date();
+  document.getElementById('topbar-date').textContent =
+    d.toLocaleDateString('fr-FR', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+
+  // Navigation
+  function showView(id, navEl) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById('view-' + id);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (navEl) {
+      navEl.classList.add('active');
+    } else {
+      // Find nav item matching the id
+      document.querySelectorAll('.nav-item').forEach(n => {
+        if (n.getAttribute('onclick') && n.getAttribute('onclick').includes(id)) {
+          n.classList.add('active');
+        }
+      });
+    }
+  }
+</script>
+
+
+</body></html>
