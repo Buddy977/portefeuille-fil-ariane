@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fil d'Ariane — Cockpit v2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap');
+:root{--bg:#0a0b0e;--bg2:#0f1117;--bg3:#141720;--bg4:#1a1e2e;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#e8eaf0;--text2:#8a8fa8;--text3:#4a4f68;--accent:#4f6ef7;--accent2:#7b9fff;--green:#22d3a3;--red:#f75b5b;--amber:#f5a623;--purple:#9b6ef7;--teal:#22c3d3;--c-marches:#4f6ef7;--c-reels:#22d3a3;--c-matieres:#f5a623;--c-alternatifs:#9b6ef7;--c-numeriques:#f75b5b;--c-liquidites:#8a8fa8;--c-notion:#e8e0d5;--c-figma:#a259ff;--c-twitter:#1d9bf0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+.topbar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;}
+.topbar-logo{font-size:15px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,var(--accent2),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.topbar-sep{width:1px;height:20px;background:var(--border2);}
+.topbar-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.pill{font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;letter-spacing:0.04em;}
+.pill-green{background:rgba(34,211,163,0.12);color:var(--green);border:1px solid rgba(34,211,163,0.25);}
+.pill-blue{background:rgba(79,110,247,0.12);color:var(--accent2);border:1px solid rgba(79,110,247,0.25);}
+.topbar-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);}
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.sidebar::-webkit-scrollbar{width:3px;}.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.nav-section{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;padding:16px 16px 6px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 16px;cursor:pointer;transition:background 0.15s;color:var(--text2);font-size:12px;font-weight:500;position:relative;}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.nav-item.active{background:rgba(79,110,247,0.1);color:var(--text);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);border-radius:0 2px 2px 0;}
+.nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.nav-badge{margin-left:auto;font-family:'DM Mono',monospace;font-size:9px;background:var(--bg4);color:var(--text3);padding:1px 6px;border-radius:10px;}
+.nav-divider{height:1px;background:var(--border);margin:8px 16px;}
+.main{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px;}
+.main::-webkit-scrollbar{width:4px;}.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;}
+.page-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;}
+.page-title span{color:var(--accent2);}
+.page-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-top:4px;}
+.header-actions{display:flex;gap:8px;}
+.btn{font-family:'DM Mono',monospace;font-size:10px;padding:7px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all 0.15s;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+.btn:hover{border-color:var(--accent);color:var(--accent2);background:rgba(79,110,247,0.08);}
+.btn-primary{background:var(--accent);color:white;border-color:var(--accent);}
+.btn-primary:hover{background:var(--accent2);border-color:var(--accent2);color:var(--bg);}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.card-title{font-size:12px;font-weight:700;color:var(--text);}
+.card-action{font-family:'DM Mono',monospace;font-size:9px;color:var(--accent2);cursor:pointer;opacity:0.7;transition:opacity 0.15s;text-decoration:none;}
+.card-action:hover{opacity:1;}
+.card-body{padding:16px;}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:2fr 1fr;gap:16px;}
+.metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.metric-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+.metric-value{font-size:24px;font-weight:800;letter-spacing:-1px;}
+.metric-sub{font-family:'DM Mono',monospace;font-size:10px;margin-top:4px;}
+.pos{color:var(--green);}.neg{color:var(--red);}.muted{color:var(--text3);}
+.alloc-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+.alloc-row:last-child{margin-bottom:0;}
+.alloc-label{width:120px;font-size:11px;color:var(--text2);flex-shrink:0;display:flex;align-items:center;gap:7px;}
+.alloc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.alloc-track{flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;}
+.alloc-fill{height:100%;border-radius:2px;}
+.alloc-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);width:30px;text-align:right;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.02);color:var(--text);}
+.td-name{font-weight:600;color:var(--text);}
+.td-mono{font-family:'DM Mono',monospace;font-size:11px;}
+.td-pill{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:10px;}
+.view{display:none;flex-direction:column;gap:20px;}
+.view.active{display:flex;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* NOTION */
+.notion-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.notion-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:block;}
+.notion-card:hover{border-color:rgba(232,224,213,0.25);background:rgba(232,224,213,0.03);transform:translateY(-1px);}
+.notion-card-icon{font-size:18px;margin-bottom:8px;}
+.notion-card-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.notion-card-desc{font-size:11px;color:var(--text3);line-height:1.4;}
+.notion-card-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;background:rgba(232,224,213,0.08);color:var(--c-notion);border-radius:10px;margin-top:8px;display:inline-block;}
+.notion-quick{display:flex;flex-direction:column;gap:6px;}
+.notion-quick-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all 0.15s;text-decoration:none;}
+.notion-quick-item:hover{border-color:rgba(232,224,213,0.2);background:rgba(232,224,213,0.04);}
+.notion-quick-icon{font-size:13px;flex-shrink:0;}
+.notion-quick-title{font-size:12px;color:var(--text2);flex:1;}
+.notion-quick-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);}
+/* FIGMA */
+.figma-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.figma-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all 0.2s;text-decoration:none;display:block;}
+.figma-card:hover{border-color:rgba(162,89,255,0.3);transform:translateY(-1px);}
+.figma-thumb{height:80px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:28px;}
+.figma-info{padding:10px 12px;}
+.figma-name{font-size:11px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.figma-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);}
+/* TWITTER */
+.twitter-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.twitter-tab{font-family:'DM Mono',monospace;font-size:10px;padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;transition:all 0.15s;}
+.twitter-tab.active{background:rgba(29,155,240,0.12);color:var(--c-twitter);border-color:rgba(29,155,240,0.25);}
+.twitter-accounts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.twitter-account{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.15s;text-decoration:none;}
+.twitter-account:hover{border-color:rgba(29,155,240,0.25);background:rgba(29,155,240,0.04);}
+.twitter-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.twitter-name{font-size:12px;font-weight:700;color:var(--text);}
+.twitter-handle{font-family:'DM Mono',monospace;font-size:10px;color:var(--c-twitter);margin-top:1px;}
+.twitter-desc{font-size:11px;color:var(--text3);margin-top:3px;line-height:1.3;}
+.twitter-tag{font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:4px;margin-top:6px;display:inline-block;}
+/* MARCHES */
+.market-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.market-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.market-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.market-val{font-size:18px;font-weight:800;letter-spacing:-0.5px;}
+.market-change{font-family:'DM Mono',monospace;font-size:10px;margin-top:3px;}
+.market-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px;}
+/* PILIERS */
+.piliers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.pilier-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.pilier-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.pilier-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.pilier-desc{font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.4;}
+.pilier-footer{display:flex;align-items:center;justify-content:space-between;}
+.pilier-pct{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;}
+.pilier-badge{font-family:'DM Mono',monospace;font-size:9px;padding:3px 8px;border-radius:10px;}
+/* ROADMAP */
+.roadmap-item{display:flex;gap:16px;padding:0 0 20px;}
+.roadmap-item:last-child{padding-bottom:0;}
+.roadmap-left{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0;}
+.roadmap-dot{width:10px;height:10px;border-radius:50%;border:2px solid;margin-top:3px;}
+.roadmap-line{width:2px;flex:1;background:var(--border);margin-top:4px;min-height:20px;}
+.roadmap-content{flex:1;}
+.roadmap-phase{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px;}
+.roadmap-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+.roadmap-desc{font-size:11px;color:var(--text3);line-height:1.5;}
+.roadmap-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.roadmap-tag{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;background:var(--bg4);color:var(--text3);border-radius:4px;border:1px solid var(--border);}
+.principle-item{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;display:flex;gap:14px;}
+.principle-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);background:rgba(79,110,247,0.1);width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:600;}
+.principle-title{font-size:13px;font-weight:700;margin-bottom:3px;}
+.principle-text{font-size:11px;color:var(--text3);line-height:1.5;}
+.never-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(247,91,91,0.05);border:1px solid rgba(247,91,91,0.1);border-radius:6px;font-size:11px;color:var(--text2);}
+.import-zone{border:2px dashed var(--border2);border-radius:10px;padding:40px;text-align:center;transition:all 0.2s;cursor:pointer;}
+.import-zone:hover{border-color:var(--accent);background:rgba(79,110,247,0.04);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.section-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:20px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;margin-bottom:4px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">FIL D'ARIANE</div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-sub">Cockpit Personnel v2.0</div>
+  <div class="topbar-right">
+    <span class="pill pill-green">● Actif</span>
+    <span class="pill pill-blue">4 comptes</span>
+    <div class="topbar-date" id="topbar-date"></div>
+  </div>
+</div>
+
+<div class="layout">
+<div class="sidebar">
+  <div class="nav-section">Finance</div>
+  <div class="nav-item active" onclick="nav('dashboard',this)"><div class="nav-dot" style="background:var(--accent2)"></div>Tableau de bord</div>
+  <div class="nav-item" onclick="nav('allocation',this)"><div class="nav-dot" style="background:var(--text3)"></div>Allocation cible</div>
+  <div class="nav-item" onclick="nav('positions',this)"><div class="nav-dot" style="background:var(--text3)"></div>Mes positions<span class="nav-badge">8</span></div>
+  <div class="nav-item" onclick="nav('marches',this)"><div class="nav-dot" style="background:var(--green)"></div>Météo marchés</div>
+  <div class="nav-divider"></div>
+  <div class="nav-section">Les 6 Piliers</div>
+  <div class="nav-item" onclick="nav('p-marches',this)"><div class="nav-dot" style="background:var(--c-marches)"></div>Marchés financiers<span class="nav-badge">35%</span></div>
+  <div class="nav-item" onclick="nav('p-reels',this)"><div class="nav-dot" style="background:var(--c-reels)"></div>Actifs réels<span class="nav-badge">20%</span></div>
+  <div class="nav-item" onclick="nav('p-matieres',this)"><div class="nav-dot" style="background:var(--c-matieres)"></div>Matières premières<span class="nav-badge">10%</span></div>
+  <div class="nav-item" onclick="nav('p-alternatifs',this)"><div class="nav-dot" style="background:var(--c-alternatifs)"></div>Actifs alternatifs<span class="nav-badge">15%</span></div>
+  <div class="nav-item" onclick="nav('p-numeriques',this)"><div class="nav-dot" style="background:var(--c-numeriques)"></div>Actifs numériques<span class="nav-badge">8%</span></div>
+  <div class="nav-item" onclick="nav('p-liquidites',this)"><div class="nav-dot" style="background:var(--c-liquidites)"></div>Liquidités & risques<span class="nav-badge">12%</span></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section">Espaces de travail</div>
+  <div class="nav-item" onclick="nav('notion',this)"><div class="nav-dot" style="background:var(--c-notion)"></div>Notion<span class="nav-badge">Hub</span></div>
+  <div class="nav-item" onclick="nav('figma',this)"><div class="nav-dot" style="background:var(--c-figma)"></div>Figma<span class="nav-badge">Schemas</span></div>
+  <div class="nav-item" onclick="nav('twitter',this)"><div class="nav-dot" style="background:var(--c-twitter)"></div>Veille Twitter/X</div>
+  <div class="nav-divider"></div>
+  <div class="nav-section">Outils</div>
+  <div class="nav-item" onclick="nav('import',this)"><div class="nav-dot" style="background:var(--text3)"></div>Import CSV</div>
+  <div class="nav-item" onclick="nav('principes',this)"><div class="nav-dot" style="background:var(--text3)"></div>Principes</div>
+  <div class="nav-item" onclick="nav('roadmap',this)"><div class="nav-dot" style="background:var(--text3)"></div>Roadmap app</div>
+</div>
+
+<div class="main">
+
+<!-- DASHBOARD -->
+<div class="view active" id="view-dashboard">
+  <div class="page-header">
+    <div><div class="page-title">Tableau de <span>bord</span></div><div class="page-meta">4 comptes · PEA + CTO Bourse Direct · Degiro · SwissQuote · 15 mars 2026</div></div>
+    <div class="header-actions">
+      <button class="btn" onclick="nav('import',null)">↑ Import CSV</button>
+      <button class="btn btn-primary" onclick="nav('marches',null)">Marchés →</button>
+    </div>
+  </div>
+  <div class="metrics-grid">
+    <div class="metric-card"><div class="metric-label">Patrimoine total</div><div class="metric-value">28 198€</div><div class="metric-sub muted">4 comptes agrégés</div></div>
+    <div class="metric-card"><div class="metric-label">Plus-values PEA</div><div class="metric-value" style="color:var(--green)">+7 171€</div><div class="metric-sub pos">+34,1% sur PRU moyen</div></div>
+    <div class="metric-card"><div class="metric-label">Positions actives</div><div class="metric-value">8</div><div class="metric-sub muted">Sur 3 plateformes</div></div>
+    <div class="metric-card"><div class="metric-label">Cash dormant</div><div class="metric-value" style="color:var(--amber)">8 974€</div><div class="metric-sub" style="color:var(--amber)">Non rémunéré — à investir</div></div>
+  </div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Allocation réelle vs cible</div><a class="card-action" onclick="nav('allocation',null)">Détail →</a></div>
+      <div class="card-body">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">Réelle (estimée)</div>
+        <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:var(--c-marches)"></div>Marchés fin.</div><div class="alloc-track"><div class="alloc-fill" style="width:71%;background:var(--c-marches)"></div></div><div class="alloc-pct" style="color:var(--red)">71%</div></div>
+        <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:var(--c-numeriques)"></div>Actifs num.</div><div class="alloc-track"><div class="alloc-fill" style="width:9%;background:var(--c-numeriques)"></div></div><div class="alloc-pct">9%</div></div>
+        <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:var(--c-liquidites)"></div>Liquidités</div><div class="alloc-track"><div class="alloc-fill" style="width:20%;background:var(--c-liquidites)"></div></div><div class="alloc-pct" style="color:var(--amber)">20%</div></div>
+        <div style="height:1px;background:var(--border);margin:12px 0"></div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">Cible</div>
+        <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:var(--c-marches)"></div>Marchés fin.</div><div class="alloc-track"><div class="alloc-fill" style="width:35%;background:var(--c-marches);opacity:0.5"></div></div><div class="alloc-pct">35%</div></div>
+        <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:var(--c-reels)"></div>Actifs réels</div><div class="alloc-track"><div class="alloc-fill" style="width:20%;background:var(--c-reels);opacity:0.5"></div></div><div class="alloc-pct">20%</div></div>
+        <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:var(--c-alternatifs)"></div>Alternatifs</div><div class="alloc-track"><div class="alloc-fill" style="width:15%;background:var(--c-alternatifs);opacity:0.5"></div></div><div class="alloc-pct">15%</div></div>
+        <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:var(--c-liquidites)"></div>Liquidités</div><div class="alloc-track"><div class="alloc-fill" style="width:12%;background:var(--c-liquidites);opacity:0.5"></div></div><div class="alloc-pct">12%</div></div>
+        <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:var(--c-matieres)"></div>Mat. prem.</div><div class="alloc-track"><div class="alloc-fill" style="width:10%;background:var(--c-matieres);opacity:0.5"></div></div><div class="alloc-pct">10%</div></div>
+        <div class="alloc-row"><div class="alloc-label"><div class="alloc-dot" style="background:var(--c-numeriques)"></div>Numériques</div><div class="alloc-track"><div class="alloc-fill" style="width:8%;background:var(--c-numeriques);opacity:0.5"></div></div><div class="alloc-pct">8%</div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Comptes</div></div>
+        <div class="table-wrap"><table><thead><tr><th>Enveloppe</th><th>Plateforme</th><th>Valeur</th></tr></thead><tbody>
+          <tr><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">PEA</span></td><td>Bourse Direct</td><td class="td-mono pos">16 044€</td></tr>
+          <tr><td><span class="td-pill" style="background:rgba(245,166,35,0.1);color:var(--amber)">CTO</span></td><td>Bourse Direct</td><td class="td-mono">1 627€</td></tr>
+          <tr><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td><td>Degiro</td><td class="td-mono">4 779€</td></tr>
+          <tr><td><span class="td-pill" style="background:rgba(232,224,213,0.1);color:var(--c-notion)">CHF</span></td><td>SwissQuote</td><td class="td-mono">5 748€</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Actions prioritaires</div></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(247,91,91,0.06);border:1px solid rgba(247,91,91,0.12);border-radius:6px;font-size:11px"><div style="width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0"></div>Rémunérer 8 974€ de cash dormant</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.12);border-radius:6px;font-size:11px"><div style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0"></div>Construire 4 piliers manquants</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(79,110,247,0.06);border:1px solid rgba(79,110,247,0.12);border-radius:6px;font-size:11px"><div style="width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>Réduire surexposition marchés (71% vs 35%)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Accès rapide espaces travail -->
+  <div class="grid-3">
+    <a class="card" style="text-decoration:none;cursor:pointer;transition:all 0.2s" href="#" onclick="nav('notion',null);return false">
+      <div class="card-header" style="border-bottom:none">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;background:rgba(232,224,213,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">📝</div>
+          <div><div class="card-title">Notion</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">26 pages · Fil d'Ariane</div></div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--c-notion)">→</div>
+      </div>
+    </a>
+    <a class="card" style="text-decoration:none;cursor:pointer;transition:all 0.2s" href="#" onclick="nav('figma',null);return false">
+      <div class="card-header" style="border-bottom:none">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;background:rgba(162,89,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">⬡</div>
+          <div><div class="card-title">Figma</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">Diagrammes & schemas</div></div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--c-figma)">→</div>
+      </div>
+    </a>
+    <a class="card" style="text-decoration:none;cursor:pointer;transition:all 0.2s" href="#" onclick="nav('twitter',null);return false">
+      <div class="card-header" style="border-bottom:none">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;background:rgba(29,155,240,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--c-twitter);font-weight:800">𝕏</div>
+          <div><div class="card-title">Twitter / X</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">16 comptes curatés</div></div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--c-twitter)">→</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- NOTION HUB -->
+<div class="view" id="view-notion">
+  <div class="page-header">
+    <div>
+      <div class="section-badge" style="background:rgba(232,224,213,0.08);color:var(--c-notion)">● Notion</div>
+      <div class="page-title">Hub <span>Notion</span></div>
+      <div class="page-meta">Accès direct à toutes tes pages · Base de connaissance complète</div>
+    </div>
+    <a class="btn btn-primary" href="https://notion.so" target="_blank" style="background:rgba(232,224,213,0.15);border-color:rgba(232,224,213,0.3);color:var(--c-notion)">Ouvrir Notion ↗</a>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Pages clés — Fil d'Ariane</div><a class="card-action" href="https://www.notion.so/323cc60fd14681f8a019d38c56eba88a" target="_blank">Page maître ↗</a></div>
+    <div class="card-body">
+      <div class="notion-grid">
+        <a class="notion-card" href="https://www.notion.so/323cc60fd14681f8a019d38c56eba88a" target="_blank"><div class="notion-card-icon">🗺️</div><div class="notion-card-title">Portefeuille — Fil d'Ariane</div><div class="notion-card-desc">Page maître. 6 piliers, allocation cible, journal de décisions.</div><div class="notion-card-badge">Page maître</div></a>
+        <a class="notion-card" href="https://www.notion.so/324cc60fd14681d58207e28597d9e366" target="_blank"><div class="notion-card-icon">📊</div><div class="notion-card-title">Tableau de Bord</div><div class="notion-card-desc">Allocation actuelle vs cible, inventaire des positions, enveloppes.</div><div class="notion-card-badge">Mis à jour aujourd'hui</div></a>
+        <a class="notion-card" href="https://www.notion.so/324cc60fd14681b6b4aef9ba1198509a" target="_blank"><div class="notion-card-icon">🧭</div><div class="notion-card-title">Principes & Philosophie</div><div class="notion-card-desc">Tes règles fondamentales. À lire en période de stress de marché.</div><div class="notion-card-badge">Fondamental</div></a>
+        <a class="notion-card" href="https://www.notion.so/324cc60fd1468153b24cd97e8c58ec99" target="_blank"><div class="notion-card-icon">🤖</div><div class="notion-card-title">Roadmap App & Agents IA</div><div class="notion-card-desc">Feuille de route vers l'app souveraine et les agents autonomes.</div><div class="notion-card-badge">En cours</div></a>
+        <a class="notion-card" href="https://www.notion.so/323cc60fd146816d9efce50f8f3afdb9" target="_blank"><div class="notion-card-icon">📈</div><div class="notion-card-title">Marchés Financiers</div><div class="notion-card-desc">ETF sélectionnés, actions en conviction, obligations & taux.</div><div class="notion-card-badge">Niveau 2</div></a>
+        <a class="notion-card" href="https://www.notion.so/323cc60fd146813a8920c329a57ec6b6" target="_blank"><div class="notion-card-icon">🔮</div><div class="notion-card-title">Actifs Alternatifs</div><div class="notion-card-desc">Private equity, dette privée, hedge funds, royalties.</div><div class="notion-card-badge">Niveau 2</div></a>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Les 6 piliers — accès direct</div></div>
+      <div class="card-body">
+        <div class="notion-quick">
+          <a class="notion-quick-item" href="https://www.notion.so/323cc60fd146816d9efce50f8f3afdb9" target="_blank"><span class="notion-quick-icon">📈</span><span class="notion-quick-title">Marchés Financiers</span><span class="notion-quick-time">35% cible</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/323cc60fd146810fa3ecff14ba429a07" target="_blank"><span class="notion-quick-icon">🏗️</span><span class="notion-quick-title">Actifs Réels</span><span class="notion-quick-time">20% cible</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/323cc60fd14681b49ae5dbacf52c8dd9" target="_blank"><span class="notion-quick-icon">🪨</span><span class="notion-quick-title">Matières Premières</span><span class="notion-quick-time">10% cible</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/323cc60fd146813a8920c329a57ec6b6" target="_blank"><span class="notion-quick-icon">🔮</span><span class="notion-quick-title">Actifs Alternatifs</span><span class="notion-quick-time">15% cible</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/323cc60fd146814c87d0feb7d8b511b6" target="_blank"><span class="notion-quick-icon">🌐</span><span class="notion-quick-title">Actifs Numériques</span><span class="notion-quick-time">8% cible</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/323cc60fd14681ea934fef2b8f3e61d1" target="_blank"><span class="notion-quick-icon">🛡️</span><span class="notion-quick-title">Liquidités & Risques</span><span class="notion-quick-time">12% cible</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Sélections niveau 4</div></div>
+      <div class="card-body">
+        <div class="notion-quick">
+          <a class="notion-quick-item" href="https://www.notion.so/324cc60fd14681f195f2ed39496faad5" target="_blank"><span class="notion-quick-icon">🎯</span><span class="notion-quick-title">ETF Portefeuille Cœur</span><span class="notion-quick-time">WPEA, VWCE...</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/324cc60fd14681e2a9bed3ea6e100a12" target="_blank"><span class="notion-quick-icon">💹</span><span class="notion-quick-title">Actions en Conviction</span><span class="notion-quick-time">ASML, Hermès...</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/324cc60fd14681c59048edded3774a2c" target="_blank"><span class="notion-quick-icon">🏠</span><span class="notion-quick-title">SCPI & REITs</span><span class="notion-quick-time">Corum, Remake...</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/324cc60fd146818a98f9eb25634d5225" target="_blank"><span class="notion-quick-icon">🥇</span><span class="notion-quick-title">Métaux Précieux</span><span class="notion-quick-time">SGLD, FNV...</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/324cc60fd14681e5a1a9f4da6163c41e" target="_blank"><span class="notion-quick-icon">🟠</span><span class="notion-quick-title">Sélection Crypto</span><span class="notion-quick-time">BTCW, ETHW...</span></a>
+          <a class="notion-quick-item" href="https://www.notion.so/324cc60fd146814984b2d1bb0a6dfd87" target="_blank"><span class="notion-quick-icon">🚀</span><span class="notion-quick-title">Private Equity</span><span class="notion-quick-time">Altaroc, ELTIF...</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FIGMA -->
+<div class="view" id="view-figma">
+  <div class="page-header">
+    <div>
+      <div class="section-badge" style="background:rgba(162,89,255,0.1);color:var(--c-figma)">● Figma</div>
+      <div class="page-title" style="color:var(--c-figma)">Espace <span style="color:var(--text)">Figma</span></div>
+      <div class="page-meta">Diagrammes, schémas d'architecture, wireframes</div>
+    </div>
+    <a class="btn btn-primary" href="https://figma.com" target="_blank" style="background:var(--c-figma);border-color:var(--c-figma);color:white">Ouvrir Figma ↗</a>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Accès rapide</div></div>
+      <div class="card-body">
+        <div class="notion-quick">
+          <a class="notion-quick-item" href="https://figma.com/files/recent" target="_blank" style="border-color:rgba(162,89,255,0.2)"><span class="notion-quick-icon">🕐</span><span class="notion-quick-title" style="color:var(--c-figma)">Fichiers récents</span><span class="notion-quick-time">↗</span></a>
+          <a class="notion-quick-item" href="https://figma.com/files/drafts" target="_blank"><span class="notion-quick-icon">📄</span><span class="notion-quick-title">Brouillons</span><span class="notion-quick-time">↗</span></a>
+          <a class="notion-quick-item" href="https://figma.com/community" target="_blank"><span class="notion-quick-icon">🌐</span><span class="notion-quick-title">Community — Templates</span><span class="notion-quick-time">↗</span></a>
+          <a class="notion-quick-item" href="https://figma.com/proto" target="_blank"><span class="notion-quick-icon">▶️</span><span class="notion-quick-title">Prototype viewer</span><span class="notion-quick-time">↗</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Diagrammes suggérés pour ton portefeuille</div></div>
+      <div class="card-body">
+        <div class="notion-quick">
+          <div class="notion-quick-item" style="cursor:default"><span class="notion-quick-icon">🗺️</span><span class="notion-quick-title">Architecture fil d'Ariane (6 piliers)</span><span class="notion-quick-time" style="color:var(--c-figma)">À créer</span></div>
+          <div class="notion-quick-item" style="cursor:default"><span class="notion-quick-icon">🔄</span><span class="notion-quick-title">Flux de rééquilibrage</span><span class="notion-quick-time" style="color:var(--c-figma)">À créer</span></div>
+          <div class="notion-quick-item" style="cursor:default"><span class="notion-quick-icon">🤖</span><span class="notion-quick-title">Architecture agents IA (n8n)</span><span class="notion-quick-time" style="color:var(--c-figma)">À créer</span></div>
+          <div class="notion-quick-item" style="cursor:default"><span class="notion-quick-icon">📊</span><span class="notion-quick-title">Wireframe app v3</span><span class="notion-quick-time" style="color:var(--c-figma)">À créer</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Templates Community recommandés</div></div>
+    <div class="table-wrap"><table><thead><tr><th>Template</th><th>Usage</th><th>Lien</th></tr></thead><tbody>
+      <tr><td class="td-name">Flowchart Kit</td><td>Diagrammes de flux et processus</td><td><a href="https://www.figma.com/community/file/1030680344622486090" target="_blank" style="color:var(--c-figma);font-size:11px">Ouvrir ↗</a></td></tr>
+      <tr><td class="td-name">System Architecture</td><td>Schémas d'infrastructure et systèmes</td><td><a href="https://www.figma.com/community" target="_blank" style="color:var(--c-figma);font-size:11px">Community ↗</a></td></tr>
+      <tr><td class="td-name">Dashboard UI Kit</td><td>Maquettes de dashboards financiers</td><td><a href="https://www.figma.com/community" target="_blank" style="color:var(--c-figma);font-size:11px">Community ↗</a></td></tr>
+      <tr><td class="td-name">Mind Map Kit</td><td>Cartes mentales et arborescences</td><td><a href="https://www.figma.com/community" target="_blank" style="color:var(--c-figma);font-size:11px">Community ↗</a></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- TWITTER -->
+<div class="view" id="view-twitter">
+  <div class="page-header">
+    <div>
+      <div class="section-badge" style="background:rgba(29,155,240,0.1);color:var(--c-twitter)">● Twitter / X</div>
+      <div class="page-title" style="color:var(--c-twitter)">Veille <span style="color:var(--text)">Twitter/X</span></div>
+      <div class="page-meta">16 comptes curatés par thème · Accès direct au flux</div>
+    </div>
+    <a class="btn btn-primary" href="https://x.com" target="_blank" style="background:var(--c-twitter);border-color:var(--c-twitter);color:white">Ouvrir X ↗</a>
+  </div>
+  <!-- Flux direct -->
+  <div class="card">
+    <div class="card-header"><div class="card-title">Flux direct</div></div>
+    <div class="card-body" style="display:flex;gap:10px;flex-wrap:wrap">
+      <a href="https://x.com/home" target="_blank" class="btn" style="flex:1;justify-content:center">🏠 Mon fil</a>
+      <a href="https://x.com/explore" target="_blank" class="btn" style="flex:1;justify-content:center">🔍 Explorer</a>
+      <a href="https://x.com/notifications" target="_blank" class="btn" style="flex:1;justify-content:center">🔔 Notifications</a>
+      <a href="https://x.com/messages" target="_blank" class="btn" style="flex:1;justify-content:center">✉️ Messages</a>
+      <a href="https://x.com/i/lists" target="_blank" class="btn btn-primary" style="flex:1;justify-content:center">📋 Mes listes</a>
+    </div>
+  </div>
+  <!-- Comptes curatés -->
+  <div id="twitter-content">
+    <div class="twitter-tabs" id="twitter-tabs">
+      <div class="twitter-tab active" onclick="filterTwit('all',this)">Tous (16)</div>
+      <div class="twitter-tab" onclick="filterTwit('macro',this)">Macro</div>
+      <div class="twitter-tab" onclick="filterTwit('crypto',this)">Crypto</div>
+      <div class="twitter-tab" onclick="filterTwit('etf',this)">ETF & Marchés</div>
+      <div class="twitter-tab" onclick="filterTwit('france',this)">France 🇫🇷</div>
+      <div class="twitter-tab" onclick="filterTwit('ia',this)">IA & Tech</div>
+    </div>
+    <div class="twitter-accounts" id="twitter-list"></div>
+  </div>
+</div>
+
+<!-- MÉTÉO MARCHÉS -->
+<div class="view" id="view-marches">
+  <div class="page-header"><div><div class="page-title">Météo des <span>marchés</span></div><div class="page-meta">Données indicatives · 15 mars 2026</div></div></div>
+  <div class="market-grid">
+    <div class="market-card"><div class="market-label">S&P 500</div><div class="market-val">5 638</div><div class="market-change pos">+0,41%</div><div class="market-time">Hier clôture</div></div>
+    <div class="market-card"><div class="market-label">MSCI World</div><div class="market-val">3 742</div><div class="market-change pos">+0,38%</div><div class="market-time">Hier clôture</div></div>
+    <div class="market-card"><div class="market-label">CAC 40</div><div class="market-val">8 124</div><div class="market-change neg">-0,22%</div><div class="market-time">Hier clôture</div></div>
+    <div class="market-card"><div class="market-label">Bitcoin (USD)</div><div class="market-val">83 420$</div><div class="market-change pos">+1,24%</div><div class="market-time">Hier clôture</div></div>
+    <div class="market-card"><div class="market-label">Or (XAU/USD)</div><div class="market-val">2 988$</div><div class="market-change pos">+0,68%</div><div class="market-time">Hier clôture</div></div>
+    <div class="market-card"><div class="market-label">EUR/USD</div><div class="market-val">1,0882</div><div class="market-change neg">-0,15%</div><div class="market-time">Hier clôture</div></div>
+    <div class="market-card"><div class="market-label">EUR/CHF</div><div class="market-val">0,9571</div><div class="market-change neg">-0,08%</div><div class="market-time">Hier clôture</div></div>
+    <div class="market-card"><div class="market-label">Taux BCE</div><div class="market-val">2,65%</div><div class="market-change muted">Inchangé</div><div class="market-time">Mars 2026</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Régime macro actuel</div></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(34,211,163,0.06);border:1px solid rgba(34,211,163,0.15);border-radius:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></div><div><div style="font-size:12px;font-weight:700">Désinflation progressive</div><div style="font-size:11px;color:var(--text3);margin-top:2px">BCE en cycle baissier. Inflation ~2,3%. Favorable aux obligations.</div></div></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0"></div><div><div style="font-size:12px;font-weight:700">Croissance ralentie en Europe</div><div style="font-size:11px;color:var(--text3);margin-top:2px">PMI manufacturier sous 50. Moteur US encore solide.</div></div></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(247,91,91,0.06);border:1px solid rgba(247,91,91,0.15);border-radius:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></div><div><div style="font-size:12px;font-weight:700">Tensions géopolitiques élevées</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Favorable or, énergie, actifs réels. Dollar fort.</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Sources données temps réel</div></div>
+      <div class="card-body">
+        <div class="notion-quick">
+          <a href="https://finance.yahoo.com" target="_blank" class="notion-quick-item"><span class="notion-quick-icon">📊</span><span class="notion-quick-title">Yahoo Finance</span><span class="notion-quick-time">Cours ETF</span></a>
+          <a href="https://www.tradingview.com" target="_blank" class="notion-quick-item"><span class="notion-quick-icon">📈</span><span class="notion-quick-title">TradingView</span><span class="notion-quick-time">Graphiques</span></a>
+          <a href="https://coinmarketcap.com" target="_blank" class="notion-quick-item"><span class="notion-quick-icon">🟠</span><span class="notion-quick-title">CoinMarketCap</span><span class="notion-quick-time">Crypto</span></a>
+          <a href="https://www.investing.com/economic-calendar" target="_blank" class="notion-quick-item"><span class="notion-quick-icon">📅</span><span class="notion-quick-title">Calendrier économique</span><span class="notion-quick-time">BCE, Fed, OPEP</span></a>
+          <a href="https://defillama.com" target="_blank" class="notion-quick-item"><span class="notion-quick-icon">🔗</span><span class="notion-quick-title">DefiLlama</span><span class="notion-quick-time">DeFi TVL</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ALLOCATION -->
+<div class="view" id="view-allocation">
+  <div class="page-header"><div><div class="page-title">Allocation <span>cible</span></div><div class="page-meta">Long terme · Tolérance élevée · Objectifs équilibrés</div></div></div>
+  <div class="piliers-grid">
+    <div class="pilier-card" onclick="nav('p-marches',null)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-marches);border-radius:10px 10px 0 0"></div><div class="pilier-name" style="color:var(--c-marches)">📈 Marchés Financiers</div><div class="pilier-desc">Actions, obligations, ETF. Moteur de croissance. Actuellement surpondéré.</div><div class="pilier-footer"><div class="pilier-pct" style="color:var(--c-marches)">35%</div><div class="pilier-badge" style="background:rgba(79,110,247,0.1);color:var(--c-marches)">Réel : 71%</div></div></div>
+    <div class="pilier-card" onclick="nav('p-reels',null)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-reels);border-radius:10px 10px 0 0"></div><div class="pilier-name" style="color:var(--c-reels)">🏗️ Actifs Réels</div><div class="pilier-desc">Immobilier, infrastructure, forêts. Protection inflation.</div><div class="pilier-footer"><div class="pilier-pct" style="color:var(--c-reels)">20%</div><div class="pilier-badge" style="background:rgba(247,91,91,0.1);color:var(--red)">Réel : 0%</div></div></div>
+    <div class="pilier-card" onclick="nav('p-alternatifs',null)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-alternatifs);border-radius:10px 10px 0 0"></div><div class="pilier-name" style="color:var(--c-alternatifs)">🔮 Actifs Alternatifs</div><div class="pilier-desc">PE, dette privée, hedge funds. Prime d'illiquidité.</div><div class="pilier-footer"><div class="pilier-pct" style="color:var(--c-alternatifs)">15%</div><div class="pilier-badge" style="background:rgba(247,91,91,0.1);color:var(--red)">Réel : 0%</div></div></div>
+    <div class="pilier-card" onclick="nav('p-liquidites',null)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-liquidites);border-radius:10px 10px 0 0"></div><div class="pilier-name" style="color:var(--text2)">🛡️ Liquidités & Risques</div><div class="pilier-desc">Cash, hedging, diversification monétaire.</div><div class="pilier-footer"><div class="pilier-pct" style="color:var(--text2)">12%</div><div class="pilier-badge" style="background:rgba(245,166,35,0.1);color:var(--amber)">Réel : 20%</div></div></div>
+    <div class="pilier-card" onclick="nav('p-matieres',null)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-matieres);border-radius:10px 10px 0 0"></div><div class="pilier-name" style="color:var(--c-matieres)">🪨 Matières Premières</div><div class="pilier-desc">Or, cuivre, uranium. Décorrélation géopolitique.</div><div class="pilier-footer"><div class="pilier-pct" style="color:var(--c-matieres)">10%</div><div class="pilier-badge" style="background:rgba(247,91,91,0.1);color:var(--red)">Réel : 0%</div></div></div>
+    <div class="pilier-card" onclick="nav('p-numeriques',null)"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--c-numeriques);border-radius:10px 10px 0 0"></div><div class="pilier-name" style="color:var(--c-numeriques)">🌐 Actifs Numériques</div><div class="pilier-desc">BTC, ETH, infrastructure. Asymétrie de rendement.</div><div class="pilier-footer"><div class="pilier-pct" style="color:var(--c-numeriques)">8%</div><div class="pilier-badge" style="background:rgba(34,211,163,0.1);color:var(--green)">Réel : 9% ✓</div></div></div>
+  </div>
+</div>
+
+<!-- POSITIONS -->
+<div class="view" id="view-positions">
+  <div class="page-header"><div><div class="page-title">Mes <span>positions</span></div><div class="page-meta">8 actifs · 4 plateformes · 28 198€ total · 15 mars 2026</div></div><button class="btn" onclick="nav('import',null)">↑ Import CSV</button></div>
+  <div class="metrics-grid">
+    <div class="metric-card"><div class="metric-label">Total investi</div><div class="metric-value">19 224€</div><div class="metric-sub muted">Hors cash</div></div>
+    <div class="metric-card"><div class="metric-label">Plus-values PEA</div><div class="metric-value" style="color:var(--green)">+7 171€</div><div class="metric-sub pos">3 positions PEA</div></div>
+    <div class="metric-card"><div class="metric-label">Cash dormant</div><div class="metric-value" style="color:var(--amber)">8 974€</div><div class="metric-sub" style="color:var(--amber)">Non rémunéré</div></div>
+    <div class="metric-card"><div class="metric-label">Patrimoine total</div><div class="metric-value">28 198€</div><div class="metric-sub muted">Tous comptes</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Inventaire complet</div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Actif</th><th>ISIN</th><th>Pilier</th><th>Enveloppe</th><th>Plateforme</th><th>Qté</th><th>PRU</th><th>Valeur</th><th>+/- value</th><th>Perf.</th></tr></thead>
+        <tbody>
+          <tr><td class="td-name">Amundi MSCI EMU ESG</td><td class="td-mono" style="font-size:9px">LU0908501058</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--c-marches)">Marchés</span></td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">PEA</span></td><td>Bourse Direct</td><td class="td-mono">11</td><td class="td-mono">193,27€</td><td class="td-mono">3 599€</td><td class="td-mono pos">+1 473€</td><td class="td-mono pos">+69,3%</td></tr>
+          <tr><td class="td-name">Amundi MSCI World Swap</td><td class="td-mono" style="font-size:9px">LU1681043599</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--c-marches)">Marchés</span></td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">PEA</span></td><td>Bourse Direct</td><td class="td-mono">12</td><td class="td-mono">321,67€</td><td class="td-mono">7 314€</td><td class="td-mono pos">+3 454€</td><td class="td-mono pos">+89,5%</td></tr>
+          <tr><td class="td-name">THEAM Easy ETF BNP</td><td class="td-mono" style="font-size:9px">FR0013041530</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--c-marches)">Marchés</span></td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">PEA</span></td><td>Bourse Direct</td><td class="td-mono">240</td><td class="td-mono">12,03€</td><td class="td-mono">5 130€</td><td class="td-mono pos">+2 243€</td><td class="td-mono pos">+77,7%</td></tr>
+          <tr><td class="td-name">Xtrackers MSCI USA</td><td class="td-mono" style="font-size:9px">IE00BJ0KDR00</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--c-marches)">Marchés</span></td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td><td>Degiro</td><td class="td-mono">10</td><td class="td-mono muted">—</td><td class="td-mono">1 713€</td><td class="td-mono muted">—</td><td class="td-mono muted">—</td></tr>
+          <tr><td class="td-name">iShares Core MSCI World</td><td class="td-mono" style="font-size:9px">IE00B4L5Y983</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--c-marches)">Marchés</span></td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td><td>Degiro</td><td class="td-mono">2</td><td class="td-mono muted">—</td><td class="td-mono">224€</td><td class="td-mono muted">—</td><td class="td-mono muted">—</td></tr>
+          <tr><td class="td-name">iShares S&P 500 Hedged</td><td class="td-mono" style="font-size:9px">IE00B3ZW0K18</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--c-marches)">Marchés</span></td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td><td>Degiro</td><td class="td-mono">3</td><td class="td-mono muted">—</td><td class="td-mono">412€</td><td class="td-mono muted">—</td><td class="td-mono muted">—</td></tr>
+          <tr><td class="td-name">iShares Bitcoin ETP</td><td class="td-mono" style="font-size:9px">XS2940466316</td><td><span class="td-pill" style="background:rgba(247,91,91,0.1);color:var(--c-numeriques)">Num.</span></td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td><td>Degiro</td><td class="td-mono">389</td><td class="td-mono muted">—</td><td class="td-mono">2 432€</td><td class="td-mono muted">—</td><td class="td-mono muted">—</td></tr>
+          <tr><td class="td-name">Cash CHF + EUR</td><td class="td-mono muted">—</td><td><span class="td-pill" style="background:rgba(138,143,168,0.1);color:var(--text3)">Liquidités</span></td><td><span class="td-pill" style="background:rgba(232,224,213,0.1);color:var(--c-notion)">CHF</span></td><td>SwissQuote</td><td class="td-mono muted">—</td><td class="td-mono muted">—</td><td class="td-mono">5 748€</td><td class="td-mono muted">0€</td><td class="td-mono" style="color:var(--red)">0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PILIERS -->
+<div class="view" id="view-p-marches">
+  <div class="page-header"><div><div class="page-title" style="color:var(--c-marches)">📈 Marchés <span style="color:var(--text)">Financiers</span></div><div class="page-meta">Cible 35% · Réel ~71% · Surpondéré · À rééquilibrer progressivement</div></div><a class="btn btn-primary" href="https://www.notion.so/323cc60fd146816d9efce50f8f3afdb9" target="_blank">Notion ↗</a></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><div class="card-title">Positions (6 ETF)</div></div><div class="table-wrap"><table><thead><tr><th>ETF</th><th>Enveloppe</th><th>Valeur</th><th>Perf.</th></tr></thead><tbody>
+      <tr><td class="td-name">Amundi MSCI World</td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">PEA</span></td><td class="td-mono">7 314€</td><td class="td-mono pos">+89,5%</td></tr>
+      <tr><td class="td-name">THEAM Easy ETF BNP</td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">PEA</span></td><td class="td-mono">5 130€</td><td class="td-mono pos">+77,7%</td></tr>
+      <tr><td class="td-name">Amundi MSCI EMU ESG</td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">PEA</span></td><td class="td-mono">3 599€</td><td class="td-mono pos">+69,3%</td></tr>
+      <tr><td class="td-name">Xtrackers MSCI USA</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td><td class="td-mono">1 713€</td><td class="td-mono muted">—</td></tr>
+      <tr><td class="td-name">iShares S&P 500</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td><td class="td-mono">412€</td><td class="td-mono muted">—</td></tr>
+      <tr><td class="td-name">iShares MSCI World</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td><td class="td-mono">224€</td><td class="td-mono muted">—</td></tr>
+    </tbody></table></div></div>
+    <div class="card"><div class="card-header"><div class="card-title">ETF cœur recommandés</div><a class="card-action" href="https://www.notion.so/324cc60fd14681f195f2ed39496faad5" target="_blank">Niveau 4 ↗</a></div><div class="table-wrap"><table><thead><tr><th>Ticker</th><th>Indice</th><th>TER</th><th>Env.</th></tr></thead><tbody>
+      <tr><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">WPEA</span></td><td>MSCI World</td><td class="td-mono">0,38%</td><td><span class="td-pill" style="background:rgba(34,211,163,0.1);color:var(--green)">PEA</span></td></tr>
+      <tr><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">VWCE</span></td><td>All-World</td><td class="td-mono">0,22%</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td></tr>
+      <tr><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CSP1</span></td><td>S&P 500</td><td class="td-mono">0,07%</td><td><span class="td-pill" style="background:rgba(79,110,247,0.1);color:var(--accent2)">CTO</span></td></tr>
+    </tbody></table></div></div>
+  </div>
+</div>
+
+<div class="view" id="view-p-reels"><div class="page-header"><div><div class="page-title" style="color:var(--c-reels)">🏗️ Actifs <span style="color:var(--text)">Réels</span></div><div class="page-meta">Cible 20% · Réel 0% · Aucune position · Priorité 1</div></div><a class="btn btn-primary" href="https://www.notion.so/323cc60fd146810fa3ecff14ba429a07" target="_blank">Notion ↗</a></div><div class="card"><div class="card-body" style="padding:40px;text-align:center"><div style="font-size:28px;margin-bottom:12px">🏠</div><div style="font-size:14px;font-weight:700;margin-bottom:6px">Premier investissement recommandé</div><div style="font-size:12px;color:var(--text3);margin-bottom:20px">SCPI Corum Origin ou Remake Live en assurance-vie (0 frais souscription)<br>ou via CTO pour les REITs US (Prologis, Equinix).</div><a class="btn btn-primary" href="https://www.notion.so/324cc60fd14681c59048edded3774a2c" target="_blank">Voir sélection SCPI & REITs →</a></div></div></div>
+
+<div class="view" id="view-p-matieres"><div class="page-header"><div><div class="page-title" style="color:var(--c-matieres)">🪨 Matières <span style="color:var(--text)">Premières</span></div><div class="page-meta">Cible 10% · Réel 0% · Commencer par l'or</div></div><a class="btn btn-primary" href="https://www.notion.so/323cc60fd14681b49ae5dbacf52c8dd9" target="_blank">Notion ↗</a></div><div class="card"><div class="card-body" style="padding:40px;text-align:center"><div style="font-size:28px;margin-bottom:12px">🥇</div><div style="font-size:14px;font-weight:700;margin-bottom:6px">ETC Or physique SGLD</div><div style="font-size:12px;color:var(--text3);margin-bottom:20px">Invesco Physical Gold · TER 0,12% · Coté Xetra<br>Accessible depuis Degiro CTO. Adossé à de l'or physique alloué.</div><a class="btn btn-primary" href="https://www.notion.so/324cc60fd146818a98f9eb25634d5225" target="_blank">Voir sélection métaux →</a></div></div></div>
+
+<div class="view" id="view-p-alternatifs"><div class="page-header"><div><div class="page-title" style="color:var(--c-alternatifs)">🔮 Actifs <span style="color:var(--text)">Alternatifs</span></div><div class="page-meta">Cible 15% · Réel 0% · ELTIF 2.0 dès 10 000€</div></div><a class="btn btn-primary" href="https://www.notion.so/323cc60fd146813a8920c329a57ec6b6" target="_blank">Notion ↗</a></div><div class="card"><div class="card-body" style="padding:40px;text-align:center"><div style="font-size:28px;margin-bottom:12px">🚀</div><div style="font-size:14px;font-weight:700;margin-bottom:6px">Accès via ELTIF 2.0</div><div style="font-size:12px;color:var(--text3);margin-bottom:20px">iCapital · Tikehau · Ares · Dès 10 000€ · TRI cible 10-15%<br>Horizon 7-10 ans minimum. Diversifier sur 3 millésimes.</div><a class="btn btn-primary" href="https://www.notion.so/324cc60fd146814984b2d1bb0a6dfd87" target="_blank">Voir sélection PE →</a></div></div></div>
+
+<div class="view" id="view-p-numeriques">
+  <div class="page-header"><div><div class="page-title" style="color:var(--c-numeriques)">🌐 Actifs <span style="color:var(--text)">Numériques</span></div><div class="page-meta">Cible 8% · Réel 9% · Équilibré · Bitcoin ETP sur Degiro</div></div><a class="btn btn-primary" href="https://www.notion.so/323cc60fd146814c87d0feb7d8b511b6" target="_blank">Notion ↗</a></div>
+  <div class="card"><div class="card-header"><div class="card-title">Position actuelle</div></div><div class="table-wrap"><table><thead><tr><th>Actif</th><th>ISIN</th><th>Qté</th><th>Valeur</th><th>Plateforme</th></tr></thead><tbody><tr><td class="td-name">iShares Bitcoin ETP</td><td class="td-mono" style="font-size:9px">XS2940466316</td><td class="td-mono">389</td><td class="td-mono">2 432€</td><td>Degiro CTO</td></tr></tbody></table></div></div>
+</div>
+
+<div class="view" id="view-p-liquidites">
+  <div class="page-header"><div><div class="page-title">🛡️ Liquidités & <span>Risques</span></div><div class="page-meta">Cible 12% · Réel 20% · Cash non rémunéré — urgence</div></div><a class="btn btn-primary" href="https://www.notion.so/323cc60fd14681ea934fef2b8f3e61d1" target="_blank">Notion ↗</a></div>
+  <div class="card"><div class="card-header"><div class="card-title">Cash disponible — à rémunérer d'urgence</div></div><div class="table-wrap"><table><thead><tr><th>Compte</th><th>Montant</th><th>Rémunération actuelle</th><th>Action recommandée</th></tr></thead><tbody>
+    <tr><td>CTO Bourse Direct</td><td class="td-mono">1 627€</td><td class="td-mono" style="color:var(--red)">0%</td><td style="font-size:11px">→ ETF monétaire CSH2 (TER 0,10%, ~3,5%)</td></tr>
+    <tr><td>SwissQuote CHF</td><td class="td-mono">5 501 CHF</td><td class="td-mono" style="color:var(--red)">0%</td><td style="font-size:11px">→ Compte à terme CHF SwissQuote</td></tr>
+    <tr><td>SwissQuote EUR</td><td class="td-mono">28€</td><td class="td-mono muted">—</td><td style="font-size:11px">—</td></tr>
+  </tbody></table></div></div>
+</div>
+
+<!-- IMPORT -->
+<div class="view" id="view-import">
+  <div class="page-header"><div><div class="page-title">Import <span>CSV</span></div><div class="page-meta">Glisse tes fichiers depuis Bourse Direct, Degiro, SwissQuote, Binance...</div></div></div>
+  <div class="import-zone">
+    <div style="font-size:32px;margin-bottom:12px">📥</div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:6px">Glisse tes fichiers CSV ici</div>
+    <div style="font-size:12px;color:var(--text3)">Ou clique pour sélectionner depuis ton ordinateur</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;background:var(--bg4);border:1px solid var(--border2);border-radius:4px;color:var(--text2)">Bourse Direct ✓</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;background:var(--bg4);border:1px solid var(--border2);border-radius:4px;color:var(--text2)">Degiro ✓</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;background:var(--bg4);border:1px solid var(--border2);border-radius:4px;color:var(--text2)">SwissQuote ✓</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);border-radius:4px;color:var(--amber)">Binance</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;padding:3px 9px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);border-radius:4px;color:var(--amber)">Coinbase</span>
+    </div>
+  </div>
+</div>
+
+<!-- PRINCIPES -->
+<div class="view" id="view-principes">
+  <div class="page-header"><div><div class="page-title">Principes & <span>Philosophie</span></div><div class="page-meta">À lire lors des moments de stress de marché</div></div><a class="btn" href="https://www.notion.so/324cc60fd14681b6b4aef9ba1198509a" target="_blank">Notion ↗</a></div>
+  <div class="grid-2">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="principle-item"><div class="principle-num">1</div><div><div class="principle-title">La diversification est la seule garantie gratuite</div><div class="principle-text">Personne ne sait ce qui surperformera dans 15 ans. La diversification est la seule stratégie qui résiste à l'incertitude radicale.</div></div></div>
+      <div class="principle-item"><div class="principle-num">2</div><div><div class="principle-title">Le temps est le seul levier gratuit</div><div class="principle-text">Chaque année supplémentaire augmente la probabilité d'un résultat positif. La patience est un avantage compétitif réel.</div></div></div>
+      <div class="principle-item"><div class="principle-num">3</div><div><div class="principle-title">Les crises sont des opportunités</div><div class="principle-text">Une baisse de -30% sur un actif de qualité est une promotion de 43%. Le cash stratégique existe pour ça.</div></div></div>
+      <div class="principle-item"><div class="principle-num">4</div><div><div class="principle-title">Comprendre avant d'investir</div><div class="principle-text">Règle absolue : ne jamais investir dans ce qu'on ne peut pas expliquer en deux phrases simples.</div></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card"><div class="card-header"><div class="card-title">Ce que je ne ferai jamais</div></div><div class="card-body"><div style="display:flex;flex-direction:column;gap:6px"><div class="never-item"><span style="color:var(--red)">✕</span>Vendre en panique lors d'un krach</div><div class="never-item"><span style="color:var(--red)">✕</span>Investir dans ce que je ne comprends pas</div><div class="never-item"><span style="color:var(--red)">✕</span>Chaser une performance passée récente</div><div class="never-item"><span style="color:var(--red)">✕</span>M'endetter pour spéculer sur des actifs liquides</div><div class="never-item"><span style="color:var(--red)">✕</span>Réagir aux titres de presse sans recul</div></div></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Profil investisseur</div></div><div class="table-wrap"><table><tbody><tr><td style="color:var(--text3);font-size:11px">Horizon</td><td class="td-mono" style="color:var(--accent2)">Long terme (10-20 ans)</td></tr><tr><td style="color:var(--text3);font-size:11px">Tolérance</td><td class="td-mono" style="color:var(--amber)">Élevée (accepte -40%)</td></tr><tr><td style="color:var(--text3);font-size:11px">Objectif</td><td style="font-size:11px">Croissance + revenus + protection</td></tr></tbody></table></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="view" id="view-roadmap">
+  <div class="page-header"><div><div class="page-title">Roadmap <span>Application</span></div><div class="page-meta">4 phases vers l'app souveraine avec agents IA</div></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><div class="card-title">Feuille de route</div></div><div class="card-body"><div style="display:flex;flex-direction:column">
+      <div class="roadmap-item"><div class="roadmap-left"><div class="roadmap-dot" style="border-color:var(--green);background:rgba(34,211,163,0.2)"></div><div class="roadmap-line"></div></div><div class="roadmap-content"><div class="roadmap-phase" style="color:var(--green)">Phase 1 — Fait ✅</div><div class="roadmap-title">App HTML v2 + Vercel</div><div class="roadmap-desc">Déployée sur portefeuille-fil-ariane.vercel.app. Navigation, données réelles, Notion, Figma, Twitter.</div><div class="roadmap-tags"><span class="roadmap-tag">HTML/CSS/JS</span><span class="roadmap-tag">Vercel</span><span class="roadmap-tag">Gratuit</span></div></div></div>
+      <div class="roadmap-item"><div class="roadmap-left"><div class="roadmap-dot" style="border-color:var(--amber);background:rgba(245,166,35,0.1)"></div><div class="roadmap-line"></div></div><div class="roadmap-content"><div class="roadmap-phase" style="color:var(--amber)">Phase 2 — 3 mois</div><div class="roadmap-title">Graphiques dynamiques + données live</div><div class="roadmap-desc">Import CSV auto, courbes performance, calcul écarts d'allocation en temps réel.</div><div class="roadmap-tags"><span class="roadmap-tag">CSV Parser</span><span class="roadmap-tag">Chart.js</span><span class="roadmap-tag">Yahoo Finance</span></div></div></div>
+      <div class="roadmap-item"><div class="roadmap-left"><div class="roadmap-dot" style="border-color:var(--accent);background:rgba(79,110,247,0.1)"></div><div class="roadmap-line"></div></div><div class="roadmap-content"><div class="roadmap-phase" style="color:var(--accent2)">Phase 3 — 6 mois</div><div class="roadmap-title">n8n + alertes automatiques</div><div class="roadmap-desc">Workflows : collecte des prix, alertes allocation, rapports hebdomadaires Claude.</div><div class="roadmap-tags"><span class="roadmap-tag">n8n</span><span class="roadmap-tag">Claude API</span><span class="roadmap-tag">Alertes</span></div></div></div>
+      <div class="roadmap-item"><div class="roadmap-left"><div class="roadmap-dot" style="border-color:var(--purple);background:rgba(155,110,247,0.1)"></div></div><div class="roadmap-content"><div class="roadmap-phase" style="color:var(--purple)">Phase 4 — 12 mois+</div><div class="roadmap-title">Agents IA autonomes</div><div class="roadmap-desc">Agent Veille, Allocation, Reporting, Risque. Pilotés par Claude via MCP.</div><div class="roadmap-tags"><span class="roadmap-tag">Agents Claude</span><span class="roadmap-tag">MCP</span><span class="roadmap-tag">Souverain</span></div></div></div>
+    </div></div></div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card"><div class="card-header"><div class="card-title">Stack technique</div></div><div class="table-wrap"><table><thead><tr><th>Couche</th><th>Outil</th><th>Coût</th></tr></thead><tbody>
+        <tr><td>Base connaissance</td><td class="td-name">Notion</td><td class="td-mono pos">Gratuit</td></tr>
+        <tr><td>Hébergement</td><td class="td-name">Vercel</td><td class="td-mono pos">Gratuit</td></tr>
+        <tr><td>Code source</td><td class="td-name">GitHub</td><td class="td-mono pos">Gratuit</td></tr>
+        <tr><td>Données marchés</td><td class="td-name">Yahoo Finance</td><td class="td-mono pos">Gratuit</td></tr>
+        <tr><td>Automatisation</td><td class="td-name">n8n self-hosted</td><td class="td-mono pos">Gratuit</td></tr>
+        <tr><td>Agents IA</td><td class="td-name">Claude API</td><td class="td-mono" style="color:var(--amber)">~10€/mois</td></tr>
+      </tbody></table></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Prochaines actions</div></div><div class="card-body"><div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(34,211,163,0.06);border:1px solid rgba(34,211,163,0.12);border-radius:6px;font-size:11px"><div style="width:5px;height:5px;border-radius:50%;background:var(--green)"></div>Uploader V2 sur GitHub → Vercel</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.12);border-radius:6px;font-size:11px"><div style="width:5px;height:5px;border-radius:50%;background:var(--amber)"></div>Rémunérer le cash SwissQuote CHF</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--text3)"><div style="width:5px;height:5px;border-radius:50%;background:var(--text3)"></div>Construire les 4 piliers manquants</div>
+      </div></div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+// Date
+const d = new Date();
+document.getElementById('topbar-date').textContent = d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+
+// Navigation
+function nav(id, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const t = document.getElementById('view-' + id);
+  if (t) t.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) { el.classList.add('active'); }
+  else {
+    document.querySelectorAll('.nav-item').forEach(n => {
+      const oc = n.getAttribute('onclick') || '';
+      if (oc.includes("'" + id + "'")) n.classList.add('active');
+    });
+  }
+}
+
+// Twitter
+const accounts = [
+  {name:"Lyn Alden",handle:"@LynAldenContact",desc:"Macro + Bitcoin + valeur. Analyses profondes, accessibles, indépendantes.",theme:"macro",bg:"#1a2030",i:"LA"},
+  {name:"Jim Bianco",handle:"@biancoresearch",desc:"Macro obligataire et taux. Analyse de la Fed et des marchés de taux.",theme:"macro",bg:"#1a2035",i:"JB"},
+  {name:"Michael Howell",handle:"@crossborderCap",desc:"Liquidité globale et cycles macro. Vision sur les flux de capitaux mondiaux.",theme:"macro",bg:"#152535",i:"MH"},
+  {name:"Willy Woo",handle:"@woonomic",desc:"Analyse on-chain Bitcoin. MVRV, NVT, cycles. Référence absolue.",theme:"crypto",bg:"#1a1525",i:"WW"},
+  {name:"PlanB",handle:"@100trillionUSD",desc:"Stock-to-Flow Bitcoin. Modèles quantitatifs de valorisation long terme.",theme:"crypto",bg:"#201520",i:"PB"},
+  {name:"Andreas Antonopoulos",handle:"@aantonop",desc:"Bitcoin et décentralisation. Pédagogue de référence.",theme:"crypto",bg:"#151525",i:"AA"},
+  {name:"Xavier Delmas",handle:"@XavierDelmas",desc:"ETF et finance personnelle en français. Référence FR pour l'investissement passif.",theme:"etf",bg:"#201a35",i:"XD"},
+  {name:"Eric Balchunas",handle:"@EricBalchunas",desc:"Spécialiste ETF Bloomberg. Flux, lancements, tendances mondiales.",theme:"etf",bg:"#152030",i:"EB"},
+  {name:"Ben Felix",handle:"@benjaminwfelix",desc:"Factor investing, finance comportementale. Rigueur académique et pratique.",theme:"etf",bg:"#152530",i:"BF"},
+  {name:"Finary",handle:"@FinaryApp",desc:"Finance personnelle française. Agrégation patrimoniale, actualités investissement.",theme:"france",bg:"#1a2030",i:"FI"},
+  {name:"Yann Darwin",handle:"@YannDarwin",desc:"Investissement immobilier et liberté financière en français.",theme:"france",bg:"#20201a",i:"YD"},
+  {name:"Matthieu Louvet",handle:"@MLouvetFinance",desc:"Finance personnelle et ETF en français. Vulgarisation et pratique.",theme:"france",bg:"#1a2530",i:"ML"},
+  {name:"Andrej Karpathy",handle:"@karpathy",desc:"Ex-OpenAI. IA et LLMs. Vulgarisation technique de pointe.",theme:"ia",bg:"#151a25",i:"AK"},
+  {name:"Sam Altman",handle:"@sama",desc:"CEO OpenAI. Vision sur l'IA générale et l'avenir économique.",theme:"ia",bg:"#151520",i:"SA"},
+  {name:"Dario Amodei",handle:"@DarioAmodei",desc:"CEO Anthropic. Sécurité IA, alignment, implications de l'AGI.",theme:"ia",bg:"#151520",i:"DA"},
+  {name:"Nate Silver",handle:"@NateSilver538",desc:"Data et probabilités. Macro US, économie, indispensable en période électorale.",theme:"macro",bg:"#1a2035",i:"NS"}
+];
+
+const tc = {macro:"#4f6ef7",crypto:"#f7931a",etf:"#9b6ef7",france:"#22d3a3",ia:"#f75b5b"};
+const tl = {macro:"Macro",crypto:"Crypto",etf:"ETF & Marchés",france:"France 🇫🇷",ia:"IA & Tech"};
+
+function renderAccounts(filter) {
+  const list = document.getElementById('twitter-list');
+  const arr = filter === 'all' ? accounts : accounts.filter(a => a.theme === filter);
+  list.innerHTML = arr.map(a => `
+    <a class="twitter-account" href="https://x.com/${a.handle.replace('@','')}" target="_blank">
+      <div class="twitter-avatar" style="background:${a.bg};color:${tc[a.theme]}">${a.i}</div>
+      <div style="flex:1;min-width:0">
+        <div class="twitter-name">${a.name}</div>
+        <div class="twitter-handle">${a.handle}</div>
+        <div class="twitter-desc">${a.desc}</div>
+        <div class="twitter-tag" style="background:${tc[a.theme]}22;color:${tc[a.theme]}">${tl[a.theme]}</div>
+      </div>
+    </a>`).join('');
+}
+
+function filterTwit(theme, el) {
+  document.querySelectorAll('.twitter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderAccounts(theme);
+}
+
+renderAccounts('all');
+</script>
+</body>
+</html>
